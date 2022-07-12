@@ -12,6 +12,13 @@ from fideslang import (
 DEFAULT_TAXONOMY = Taxonomy(
     data_category=[
         DataCategory(
+            fides_key="user",
+            organization_fides_key="default_organization",
+            name="User Data",
+            description="Data related to the user of the system, either provided directly or derived based on their usage.",
+            parent_key=None,
+        ),
+        DataCategory(
             fides_key="user.payment",
             organization_fides_key="default_organization",
             name="Payment Data",
@@ -45,13 +52,6 @@ DEFAULT_TAXONOMY = Taxonomy(
             name="Operations Data",
             description="Data used for system operations.",
             parent_key="system",
-        ),
-        DataCategory(
-            fides_key="user",
-            organization_fides_key="default_organization",
-            name="User Data",
-            description="Data related to the user of the system, either provided directly or derived based on their usage.",
-            parent_key=None,
         ),
         DataCategory(
             fides_key="user.biometric",
