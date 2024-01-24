@@ -5,3 +5,4 @@ include requirements.txt
 include dev-requirements.txt
 include versioneer.py
 include src/fideslang/_version.py
+include src/fideslang/gvl/*
