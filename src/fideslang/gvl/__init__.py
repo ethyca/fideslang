@@ -4,7 +4,7 @@ import os
 from collections import defaultdict
 from json import load
 from os.path import dirname, join
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from .models import Feature, GVLDataCategory, MappedDataCategory, MappedPurpose, Purpose
 
@@ -191,11 +191,50 @@ def data_use_to_purpose(
     return MAPPED_PURPOSES_BY_DATA_USE.get(data_use, {}).get(language, None)
 
 
+def data_use_to_purpose_translations(
+    data_use: str,
+    languages: Iterable[str] = None,
+) -> Optional[Dict[str, Purpose]]:
+    """
+    Utility function to return the translations of a GVL purpose (or special purpose) associated
+    with the given fideslang data use.
+
+    Returns `None` if no associated purpose (or special purpose) is found
+    Returns _all_ available translations if no `languages` parameter is provided.
+    """
+    translations = MAPPED_PURPOSES_BY_DATA_USE.get(data_use, {})
+    if not translations:
+        return None
+    if not languages:
+        return translations
+
+    return {language: translations.get(language, None) for language in languages}
+
+
 def feature_name_to_feature(
-    feature_name: str, language: str = DEFAULT_LANGUAGE_ID
+    feature_name: str,
+    language: str = DEFAULT_LANGUAGE_ID,
 ) -> Optional[Feature]:
     """Utility function to return a GVL feature (or special feature) given the feature's english name."""
     return FEATURES_BY_NAME.get(feature_name, {}).get(language, None)
+
+
+def feature_name_to_feature_translations(
+    feature_name: str,
+    languages: Iterable[str] = None,
+) -> Optional[Dict[str, Feature]]:
+    """Utility function to return the translations of a GVL feature (or special feature) given the feature's english name.
+
+    Returns `None` if no associated feature (or special feature) is found
+    Returns _all_ available translations if no `languages` parameter is provided.
+    """
+    translations = FEATURES_BY_NAME.get(feature_name, {})
+    if not translations:
+        return None
+    if not languages:
+        return translations
+
+    return {language: translations.get(language, None) for language in languages}
 
 
 def feature_id_to_feature_name(
