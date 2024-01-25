@@ -34,7 +34,7 @@ FEATURE_MAPPING_FILE = join(
 )
 GVL_FEATURES: Dict[int, Dict[str, Feature]] = defaultdict(dict)
 GVL_SPECIAL_FEATURES: Dict[int, Dict[str, Feature]] = defaultdict(dict)
-FEATURES_BY_NAME: Dict[str, Feature] = {}
+FEATURES_BY_NAME: Dict[str, Dict[str, Feature]] = defaultdict(dict)
 
 
 ### Data Categories
@@ -72,6 +72,23 @@ def _load_data() -> None:
         for raw_special_purpose in data["specialPurposes"].values():
             special_purpose = MappedPurpose.parse_obj(raw_special_purpose)
             special_purpose_to_data_uses[special_purpose.id] = special_purpose.data_uses
+
+    feature_id_to_english_name = {}
+    special_feature_id_to_english_name = {}
+    with open(
+        os.path.join(os.curdir, FEATURE_MAPPING_FILE), encoding="utf-8"
+    ) as mapping_file:
+        data = load(mapping_file)
+        # first load feature ID -> feature english name map based on feature mapping file
+        for raw_feature in data["features"].values():
+            feature = Feature.parse_obj(raw_feature)
+            feature_id_to_english_name[feature.id] = feature.name
+
+        for raw_special_feature in data["specialFeatures"].values():
+            special_feature = Feature.parse_obj(raw_special_feature)
+            special_feature_id_to_english_name[
+                special_feature.id
+            ] = special_feature.name
 
     gvl_category_to_fides_categories = {}
     with open(
@@ -121,15 +138,15 @@ def _load_data() -> None:
             for language, translation in translation_dict.items():
                 feature = Feature.parse_obj(translation)
                 GVL_FEATURES[feature.id][language] = feature
-                if language == DEFAULT_LANGUAGE_ID:
-                    FEATURES_BY_NAME[feature.name] = feature
+                english_name = feature_id_to_english_name[feature.id]
+                FEATURES_BY_NAME[english_name][language] = feature
 
         for translation_dict in data["specialFeatures"].values():
             for language, translation in translation_dict.items():
                 special_feature = Feature.parse_obj(translation)
                 GVL_SPECIAL_FEATURES[special_feature.id][language] = special_feature
-                if language == DEFAULT_LANGUAGE_ID:
-                    FEATURES_BY_NAME[special_feature.name] = special_feature
+                english_name = special_feature_id_to_english_name[special_feature.id]
+                FEATURES_BY_NAME[english_name][language] = special_feature
 
         for translation_dict in data["dataCategories"].values():
             for language, translation in translation_dict.items():
@@ -174,9 +191,11 @@ def data_use_to_purpose(
     return MAPPED_PURPOSES_BY_DATA_USE.get(data_use, {}).get(language, None)
 
 
-def feature_name_to_feature(feature_name: str) -> Optional[Feature]:
-    """Utility function to return a GVL feature (or special feature) given the feature's name"""
-    return FEATURES_BY_NAME.get(feature_name, None)
+def feature_name_to_feature(
+    feature_name: str, language: str = DEFAULT_LANGUAGE_ID
+) -> Optional[Feature]:
+    """Utility function to return a GVL feature (or special feature) given the feature's english name."""
+    return FEATURES_BY_NAME.get(feature_name, {}).get(language, None)
 
 
 def feature_id_to_feature_name(

@@ -123,6 +123,24 @@ def test_features():
 def test_feature_name_to_feature():
     assert feature_name_to_feature("Link different devices").id == 2
     assert feature_name_to_feature("Use precise geolocation data").id == 1
+    english_special_feature_1 = feature_name_to_feature(
+        "Use precise geolocation data", "en"
+    )
+    assert english_special_feature_1.id == 1
+    assert english_special_feature_1.name == "Use precise geolocation data"
+    chinese_special_feature_1 = feature_name_to_feature(
+        "Use precise geolocation data", "zh"
+    )
+    assert chinese_special_feature_1.id == 1
+    assert chinese_special_feature_1.name == "使用精确的地理位置数据"
+    spanish_feature_2 = feature_name_to_feature("Link different devices", "es")
+    assert spanish_feature_2.id == 2
+    assert spanish_feature_2.name == "Vincular diferentes dispositivos"
+    assert (
+        spanish_feature_2.description
+        == "En apoyo de las finalidades que se explican en este documento, tú dispositivo podría considerarse como vinculado a otros dispositivos que te pertenezcan o sean de tu hogar(por ejemplo, porque ha iniciado sesión en el mismo servicio tanto desde tu teléfono como desde tu ordenador, o porque podrías haber utilizado la misma conexión a Internet en ambos dispositivos)."
+    )
+
     assert feature_name_to_feature("Name doesn't exist") is None
 
 
