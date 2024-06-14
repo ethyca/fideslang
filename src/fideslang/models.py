@@ -109,8 +109,8 @@ class DefaultModel(BaseModel):
 
     @field_validator("version_added")
     @classmethod
-    def validate_verion_added(
-        cls, version_added: Optional[str], values: Dict
+    def validate_version_added(
+        cls, version_added: Optional[str]
     ) -> Optional[str]:
         """
         Validate that the `version_added` field is a proper FidesVersion
@@ -124,7 +124,7 @@ class DefaultModel(BaseModel):
     @field_validator("version_deprecated")
     @classmethod
     def validate_version_deprecated(
-        cls, version_deprecated: Optional[str], values: Dict
+        cls, version_deprecated: Optional[str]
     ) -> Optional[str]:
         """
         Validate that the `version_deprecated` is a proper FidesVersion
