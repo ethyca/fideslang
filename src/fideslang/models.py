@@ -16,7 +16,6 @@ from pydantic import (
     Field,
     HttpUrl,
     PositiveInt,
-    root_validator,
     validator,
 )
 
@@ -274,7 +273,7 @@ class DataSubjectRights(BaseModel):
         description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
     )
 
-    @root_validator()
+    @model_validator()
     @classmethod
     def include_exclude_has_values(cls, values: Dict) -> Dict:
         """
@@ -875,7 +874,7 @@ class DataFlow(BaseModel):
         description="An array of data categories describing the data in transit.",
     )
 
-    @root_validator(skip_on_failure=True)
+    @model_validator(skip_on_failure=True)
     @classmethod
     def user_special_case(cls, values: Dict) -> Dict:
         """
