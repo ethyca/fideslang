@@ -7,6 +7,7 @@ from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
 
 from packaging.version import Version
 from pydantic import StringConstraints
+from pydantic_core import core_schema
 
 
 class FidesValidationError(ValueError):
@@ -17,12 +18,14 @@ class FidesVersion(Version):
     """Validate strings as proper semantic versions."""
 
     @classmethod
-    def __get_validators__(cls) -> Generator:
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_before_validator_function(
+            cls.validate, handler(date), field_name=handler.field_name
+        )
 
     @classmethod
     def validate(cls, value: str) -> Version:
-        """Validates that the provided string is a valid Semantic Version."""
+        """Validates that the provided string is a valid Seman. tic Version."""
         return Version(value)
 
 
