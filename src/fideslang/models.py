@@ -36,19 +36,19 @@ from fideslang.validation import (
     valid_data_type,
 )
 
-matching_parent_key_validator = validator("parent_key", allow_reuse=True, always=True)(
+matching_parent_key_validator = field_validator("parent_key")(
     matching_parent_key
 )
-no_self_reference_validator = validator("parent_key", allow_reuse=True)(
+no_self_reference_validator = field_validator("parent_key")(
     no_self_reference
 )
-has_versioning_if_default_validator = validator(
-    "is_default", allow_reuse=True, always=True
+has_versioning_if_default_validator = field_validator(
+    "is_default"
 )(has_versioning_if_default)
-deprecated_version_later_than_added_validator = validator(
-    "version_deprecated", allow_reuse=True
+deprecated_version_later_than_added_validator = field_validator(
+    "version_deprecated",
 )(deprecated_version_later_than_added)
-is_deprecated_if_replaced_validator = validator("replaced_by", allow_reuse=True)(
+is_deprecated_if_replaced_validator = field_validator("replaced_by")(
     is_deprecated_if_replaced
 )
 
@@ -98,6 +98,7 @@ class DefaultModel(BaseModel):
     )
     is_default: bool = Field(
         default=False,
+        validate_default=True,
         description="Denotes whether the resource is part of the default taxonomy or not.",
     )
 
@@ -244,7 +245,7 @@ class SpecialCategoryLegalBasisEnum(str, Enum):
 class DataCategory(FidesModel, DefaultModel):
     """The DataCategory resource model."""
 
-    parent_key: Optional[FidesKey] = None
+    parent_key: Optional[FidesKey] = Field(default=None, validate_default=True)
 
     _matching_parent_key: classmethod = matching_parent_key_validator
     _no_self_reference: classmethod = no_self_reference_validator
@@ -275,7 +276,7 @@ class DataSubjectRights(BaseModel):
         default=None, description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
     )
 
-    @model_validator(mode="after")
+    @model_validator(mode="before")
     @classmethod
     def include_exclude_has_values(cls, values: Dict) -> Dict:
         """
@@ -303,7 +304,7 @@ class DataSubject(FidesModel, DefaultModel):
 class DataUse(FidesModel, DefaultModel):
     """The DataUse resource model."""
 
-    parent_key: Optional[FidesKey] = None
+    parent_key: Optional[FidesKey] = Field(default=None, validate_default=True)
     _matching_parent_key: classmethod = matching_parent_key_validator
     _no_self_reference: classmethod = no_self_reference_validator
 
@@ -433,7 +434,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
             )
         return meta_values
 
-    @model_validator(mode="after")
+    @model_validator(mode="before")
     @classmethod
     def validate_object_fields(  # type: ignore
         cls,
@@ -515,10 +516,10 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
 
     fides_meta: Optional[CollectionMeta] = None
 
-    _sort_fields: classmethod = validator("fields", allow_reuse=True)(
+    _sort_fields: classmethod = field_validator("fields")(
         sort_list_objects_by_name
     )
-    _unique_items_in_list: classmethod = validator("fields", allow_reuse=True)(
+    _unique_items_in_list: classmethod = field_validator("fields")(
         unique_items_in_list
     )
 
@@ -577,10 +578,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         description="An array of objects that describe the Dataset's collections.",
     )
 
-    _sort_collections: classmethod = validator("collections", allow_reuse=True)(
+    _sort_collections: classmethod = field_validator("collections")(
         sort_list_objects_by_name
     )
-    _unique_items_in_list: classmethod = validator("collections", allow_reuse=True)(
+    _unique_items_in_list: classmethod = field_validator("collections")(
         unique_items_in_list
     )
 
@@ -754,7 +755,7 @@ class Policy(FidesModel):
         description=PolicyRule.__doc__,
     )
 
-    _sort_rules: classmethod = validator("rules", allow_reuse=True)(
+    _sort_rules: classmethod = field_validator("rules")(
         sort_list_objects_by_name
     )
 
@@ -876,7 +877,7 @@ class DataFlow(BaseModel):
         default=None, description="An array of data categories describing the data in transit.",
     )
 
-    @model_validator(mode="after")
+    @model_validator(mode="before")
     @classmethod
     def user_special_case(cls, values: Dict) -> Dict:
         """
@@ -1024,11 +1025,11 @@ class System(FidesModel):
         default=None, description="System-level cookies unassociated with a data use to deliver services and functionality",
     )
 
-    _sort_privacy_declarations: classmethod = validator(
-        "privacy_declarations", allow_reuse=True
+    _sort_privacy_declarations: classmethod = field_validator(
+        "privacy_declarations"
     )(sort_list_objects_by_name)
 
-    @model_validator(mode="after")
+    @model_validator(mode="before")
     @classmethod
     def privacy_declarations_reference_data_flows(
         cls,

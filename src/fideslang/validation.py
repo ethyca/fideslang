@@ -7,7 +7,7 @@ from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
 from typing_extensions import Annotated
 
 from packaging.version import Version
-from pydantic import StringConstraints
+from pydantic import StringConstraints, ValidationInfo
 from pydantic_core import core_schema
 
 
@@ -61,21 +61,21 @@ def unique_items_in_list(values: List) -> List:
     return values
 
 
-def no_self_reference(value: FidesKey, values: Dict) -> FidesKey:
+def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:
     """
     Check to make sure that the fides_key doesn't match other fides_key
     references within an object.
 
     i.e. DataCategory.parent_key != DataCategory.fides_key
     """
-    fides_key = FidesKey(values.get("fides_key", ""))
+    fides_key = FidesKey(values.data.get("fides_key", ""))
     if value == fides_key:
         raise FidesValidationError("FidesKey can not self-reference!")
     return value
 
 
 def deprecated_version_later_than_added(
-    version_deprecated: Optional[FidesVersion], values: Dict
+    version_deprecated: Optional[FidesVersion], values: ValidationInfo
 ) -> Optional[FidesVersion]:
     """
     Check to make sure that the deprecated version is later than the added version.
@@ -87,19 +87,19 @@ def deprecated_version_later_than_added(
     if not version_deprecated:
         return None
 
-    if version_deprecated < values.get("version_added", Version("0")):
+    if version_deprecated < values.data.get("version_added", Version("0")):
         raise FidesValidationError(
             "Deprecated version number can't be earlier than version added!"
         )
 
-    if version_deprecated == values.get("version_added", Version("0")):
+    if version_deprecated == values.data.get("version_added", Version("0")):
         raise FidesValidationError(
             "Deprecated version number can't be the same as the version added!"
         )
     return version_deprecated
 
 
-def has_versioning_if_default(is_default: bool, values: Dict) -> bool:
+def has_versioning_if_default(is_default: bool, values: ValidationInfo) -> bool:
     """
     Check to make sure that version fields are set for default items.
     """
@@ -107,15 +107,15 @@ def has_versioning_if_default(is_default: bool, values: Dict) -> bool:
     # If it's a default item, it at least needs a starting version
     if is_default:
         try:
-            assert values.get("version_added")
+            assert values.data.get("version_added")
         except AssertionError:
             raise FidesValidationError("Default items must have version information!")
     # If it's not default, it shouldn't have version info
     else:
         try:
-            assert not values.get("version_added")
-            assert not values.get("version_deprecated")
-            assert not values.get("replaced_by")
+            assert not values.data.get("version_added")
+            assert not values.data.get("version_deprecated")
+            assert not values.data.get("replaced_by")
         except AssertionError:
             raise FidesValidationError(
                 "Non-default items can't have version information!"
@@ -124,23 +124,23 @@ def has_versioning_if_default(is_default: bool, values: Dict) -> bool:
     return is_default
 
 
-def is_deprecated_if_replaced(replaced_by: str, values: Dict) -> str:
+def is_deprecated_if_replaced(replaced_by: str, values: ValidationInfo) -> str:
     """
     Check to make sure that the item has been deprecated if there is a replacement.
     """
 
-    if replaced_by and not values.get("version_deprecated"):
+    if replaced_by and not values.data.get("version_deprecated"):
         raise FidesValidationError("Cannot be replaced without deprecation!")
 
     return replaced_by
 
 
-def matching_parent_key(parent_key: FidesKey, values: Dict) -> FidesKey:
+def matching_parent_key(parent_key: FidesKey, values: ValidationInfo) -> FidesKey:
     """
     Confirm that the parent_key matches the parent parsed from the FidesKey.
     """
 
-    fides_key = FidesKey(values.get("fides_key", ""))
+    fides_key = FidesKey(values.data.get("fides_key", ""))
     split_fides_key = fides_key.split(".")
 
     # Check if it is a top-level resource
