@@ -275,7 +275,7 @@ class DataSubjectRights(BaseModel):
         default=None, description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
     )
 
-    @model_validator()
+    @model_validator(mode="after")
     @classmethod
     def include_exclude_has_values(cls, values: Dict) -> Dict:
         """
@@ -433,7 +433,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
             )
         return meta_values
 
-    @model_validator()
+    @model_validator(mode="after")
     @classmethod
     def validate_object_fields(  # type: ignore
         cls,
@@ -876,7 +876,7 @@ class DataFlow(BaseModel):
         default=None, description="An array of data categories describing the data in transit.",
     )
 
-    @model_validator(skip_on_failure=True)
+    @model_validator(skip_on_failure=True, mode="after")
     @classmethod
     def user_special_case(cls, values: Dict) -> Dict:
         """
@@ -1028,7 +1028,7 @@ class System(FidesModel):
         "privacy_declarations", allow_reuse=True
     )(sort_list_objects_by_name)
 
-    @model_validator()
+    @model_validator(mode="after")
     @classmethod
     def privacy_declarations_reference_data_flows(
         cls,
