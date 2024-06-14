@@ -254,9 +254,8 @@ class Cookies(BaseModel):
     """The Cookies resource model"""
 
     name: str
-    path: Optional[str]
-    domain: Optional[str]
-
+    path: Optional[str] = None
+    domain: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -273,7 +272,7 @@ class DataSubjectRights(BaseModel):
         description="Defines the strategy used when mapping data rights to a data subject.",
     )
     values: Optional[List[DataSubjectRightsEnum]] = Field(
-        description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
+        default=None, description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
     )
 
     @model_validator()
@@ -294,7 +293,7 @@ class DataSubjectRights(BaseModel):
 class DataSubject(FidesModel, DefaultModel):
     """The DataSubject resource model."""
 
-    rights: Optional[DataSubjectRights] = Field(description=DataSubjectRights.__doc__)
+    rights: Optional[DataSubjectRights] = Field(default=None, description=DataSubjectRights.__doc__)
     automated_decisions_or_profiling: Optional[bool] = Field(
         default=False,
         description="A boolean value to annotate whether or not automated decisions/profiling exists for the data subject.",
@@ -335,7 +334,7 @@ class DatasetFieldBase(BaseModel):
     name: str = name_field
     description: Optional[str] = description_field
     data_categories: Optional[List[FidesKey]] = Field(
-        description="Arrays of Data Categories, identified by `fides_key`, that applies to this field.",
+        default=None, description="Arrays of Data Categories, identified by `fides_key`, that applies to this field.",
     )
 
 
@@ -351,7 +350,7 @@ class FidesDatasetReference(BaseModel):
 
     dataset: FidesKey
     field: str
-    direction: Optional[EdgeDirection]
+    direction: Optional[EdgeDirection] = None
 
 
 class FidesMeta(BaseModel):
@@ -362,17 +361,17 @@ class FidesMeta(BaseModel):
         default=None,
     )
     identity: Optional[str] = Field(
-        description="The type of the identity data that should be used to query this collection for a DSR."
+        default=None, description="The type of the identity data that should be used to query this collection for a DSR."
     )
     primary_key: Optional[bool] = Field(
         default=False,
         description="Whether the current field can be considered a primary key of the current collection"
     )
     data_type: Optional[str] = Field(
-        description="Optionally specify the data type. Fides will attempt to cast values to this type when querying."
+        default=None, description="Optionally specify the data type. Fides will attempt to cast values to this type when querying."
     )
     length: Optional[PositiveInt] = Field(
-        description="Optionally specify the allowable field length. Fides will not generate values that exceed this size."
+        default=None, description="Optionally specify the allowable field length. Fides will not generate values that exceed this size."
     )
     return_all_elements: Optional[bool] = Field(
         default=False,
@@ -415,7 +414,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
     fides_meta: Optional[FidesMeta] = None
 
     fields: Optional[List[DatasetField]] = Field(
-        description="An optional array of objects that describe hierarchical/nested fields (typically found in NoSQL databases).",
+        default=None, description="An optional array of objects that describe hierarchical/nested fields (typically found in NoSQL databases).",
     )
 
     @field_validator("fides_meta")
@@ -494,7 +493,7 @@ class FidesCollectionKey(StringConstraints):
 class CollectionMeta(BaseModel):
     """Collection-level specific annotations used for query traversal"""
 
-    after: Optional[List[FidesCollectionKey]]
+    after: Optional[List[FidesCollectionKey]] = None
     skip_processing: Optional[bool] = False
 
 
@@ -508,7 +507,7 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
     name: str = name_field
     description: Optional[str] = description_field
     data_categories: Optional[List[FidesKey]] = Field(
-        description="Array of Data Category resources identified by `fides_key`, that apply to all fields in the collection.",
+        default=None, description="Array of Data Category resources identified by `fides_key`, that apply to all fields in the collection.",
     )
     fields: List[DatasetField] = Field(
         description="An array of objects that describe the collection's fields.",
@@ -560,8 +559,8 @@ class DatasetMetadata(BaseModel):
     Object used to hold application specific metadata for a dataset
     """
 
-    resource_id: Optional[str]
-    after: Optional[List[FidesKey]]
+    resource_id: Optional[str] = None
+    after: Optional[List[FidesKey]] = None
 
 
 class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
@@ -569,7 +568,7 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
 
     meta: Optional[Dict] = meta_field
     data_categories: Optional[List[FidesKey]] = Field(
-        description="Array of Data Category resources identified by `fides_key`, that apply to all collections in the Dataset.",
+        default=None, description="Array of Data Category resources identified by `fides_key`, that apply to all collections in the Dataset.",
     )
     fides_meta: Optional[DatasetMetadata] = Field(
         description=DatasetMetadata.__doc__, default=None
@@ -663,7 +662,7 @@ class OrganizationMetadata(BaseModel):
     """
 
     resource_filters: Optional[List[ResourceFilter]] = Field(
-        description="A list of filters that can be used when generating or scanning systems."
+        default=None, description="A list of filters that can be used when generating or scanning systems."
     )
 
 
@@ -680,19 +679,19 @@ class Organization(FidesModel):
         description="An inherited field from the FidesModel that is unused with an Organization.",
     )
     controller: Optional[ContactDetails] = Field(
-        description=ContactDetails.__doc__,
+        default=None, description=ContactDetails.__doc__,
     )
     data_protection_officer: Optional[ContactDetails] = Field(
-        description=ContactDetails.__doc__,
+        default=None, description=ContactDetails.__doc__,
     )
     fidesctl_meta: Optional[OrganizationMetadata] = Field(
-        description=OrganizationMetadata.__doc__,
+        default=None, description=OrganizationMetadata.__doc__,
     )
     representative: Optional[ContactDetails] = Field(
-        description=ContactDetails.__doc__,
+        default=None, description=ContactDetails.__doc__,
     )
     security_policy: Optional[HttpUrl] = Field(
-        description="Am optional URL to the organization security policy."
+        default=None, description="Am optional URL to the organization security policy."
     )
 
 
@@ -769,7 +768,7 @@ class PrivacyDeclaration(BaseModel):
     """
 
     name: Optional[str] = Field(
-        description="The name of the privacy declaration on the system.",
+        default=None, description="The name of the privacy declaration on the system.",
     )
     data_categories: List[FidesKey] = Field(
         description="An array of data categories describing a system in a privacy declaration.",
@@ -782,13 +781,13 @@ class PrivacyDeclaration(BaseModel):
         description="An array of data subjects describing a system in a privacy declaration.",
     )
     dataset_references: Optional[List[FidesKey]] = Field(
-        description="Referenced Dataset fides keys used by the system.",
+        default=None, description="Referenced Dataset fides keys used by the system.",
     )
     egress: Optional[List[FidesKey]] = Field(
-        description="The resources to which data is sent. Any `fides_key`s included in this list reference `DataFlow` entries in the `egress` array of any `System` resources to which this `PrivacyDeclaration` is applied."
+        default=None, description="The resources to which data is sent. Any `fides_key`s included in this list reference `DataFlow` entries in the `egress` array of any `System` resources to which this `PrivacyDeclaration` is applied."
     )
     ingress: Optional[List[FidesKey]] = Field(
-        description="The resources from which data is received. Any `fides_key`s included in this list reference `DataFlow` entries in the `ingress` array of any `System` resources to which this `PrivacyDeclaration` is applied."
+        default=None, description="The resources from which data is received. Any `fides_key`s included in this list reference `DataFlow` entries in the `ingress` array of any `System` resources to which this `PrivacyDeclaration` is applied."
     )
     features: List[str] = Field(
         default_factory=list, description="The features of processing personal data."
@@ -798,34 +797,34 @@ class PrivacyDeclaration(BaseModel):
         default=True,
     )
     legal_basis_for_processing: Optional[LegalBasisForProcessingEnum] = Field(
-        description="The legal basis under which personal data is processed for this purpose."
+        default=None, description="The legal basis under which personal data is processed for this purpose."
     )
     impact_assessment_location: Optional[str] = Field(
-        description="Where the legitimate interest impact assessment is stored"
+        default=None, description="Where the legitimate interest impact assessment is stored"
     )
     retention_period: Optional[str] = Field(
-        description="An optional string to describe the time period for which data is retained for this purpose."
+        default=None, description="An optional string to describe the time period for which data is retained for this purpose."
     )
     processes_special_category_data: bool = Field(
         default=False,
         description="This system processes special category data",
     )
     special_category_legal_basis: Optional[SpecialCategoryLegalBasisEnum] = Field(
-        description="The legal basis under which the special category data is processed.",
+        default=None, description="The legal basis under which the special category data is processed.",
     )
     data_shared_with_third_parties: bool = Field(
         default=False,
         description="This system shares data with third parties for this purpose.",
     )
     third_parties: Optional[str] = Field(
-        description="The types of third parties the data is shared with.",
+        default=None, description="The types of third parties the data is shared with.",
     )
     shared_categories: List[str] = Field(
         default_factory=list,
         description="The categories of personal data that this system shares with third parties.",
     )
     cookies: Optional[List[Cookies]] = Field(
-        description="Cookies associated with this data use to deliver services and functionality",
+        default=None, description="Cookies associated with this data use to deliver services and functionality",
     )
     model_config = ConfigDict(from_attributes=True)
 
@@ -838,13 +837,13 @@ class SystemMetadata(BaseModel):
     """
 
     resource_id: Optional[str] = Field(
-        description="The external resource id for the system being modeled."
+        default=None, description="The external resource id for the system being modeled."
     )
     endpoint_address: Optional[str] = Field(
-        description="The host of the external resource for the system being modeled."
+        default=None, description="The host of the external resource for the system being modeled."
     )
     endpoint_port: Optional[str] = Field(
-        description="The port of the external resource for the system being modeled."
+        default=None, description="The port of the external resource for the system being modeled."
     )
 
 
@@ -874,7 +873,7 @@ class DataFlow(BaseModel):
         description=f"Specifies the resource model class for which the `fides_key` applies. May be any of {', '.join([member.value for member in FlowableResources])}.",
     )
     data_categories: Optional[List[FidesKey]] = Field(
-        description="An array of data categories describing the data in transit.",
+        default=None, description="An array of data categories describing the data in transit.",
     )
 
     @model_validator(skip_on_failure=True)
@@ -914,16 +913,16 @@ class System(FidesModel):
 
     meta: Optional[Dict] = meta_field
     fidesctl_meta: Optional[SystemMetadata] = Field(
-        description=SystemMetadata.__doc__,
+        default=None, description=SystemMetadata.__doc__,
     )
     system_type: str = Field(
         description="A required value to describe the type of system being modeled, examples include: Service, Application, Third Party, etc.",
     )
     egress: Optional[List[DataFlow]] = Field(
-        description="The resources to which the system sends data."
+        default=None, description="The resources to which the system sends data."
     )
     ingress: Optional[List[DataFlow]] = Field(
-        description="The resources from which the system receives data."
+        default=None, description="The resources from which the system receives data."
     )
     privacy_declarations: List[PrivacyDeclaration] = Field(
         description=PrivacyDeclaration.__doc__,
@@ -933,13 +932,13 @@ class System(FidesModel):
         description="An optional value to identify the owning department or group of the system within your organization",
     )
     vendor_id: Optional[str] = Field(
-        description="The unique identifier for the vendor that's associated with this system."
+        default=None, description="The unique identifier for the vendor that's associated with this system."
     )
     previous_vendor_id: Optional[str] = Field(
-        description="If specified, the unique identifier for the vendor that was previously associated with this system."
+        default=None, description="If specified, the unique identifier for the vendor that was previously associated with this system."
     )
     vendor_deleted_date: Optional[datetime] = Field(
-        description="The deleted date of the vendor that's associated with this system."
+        default=None, description="The deleted date of the vendor that's associated with this system."
     )
     dataset_references: List[FidesKey] = Field(
         default_factory=list,
@@ -954,7 +953,7 @@ class System(FidesModel):
         description="This toggle indicates whether the system is exempt from privacy regulation if they do process personal data.",
     )
     reason_for_exemption: Optional[str] = Field(
-        description="The reason that the system is exempt from privacy regulation."
+        default=None, description="The reason that the system is exempt from privacy regulation."
     )
     uses_profiling: bool = Field(
         default=False,
@@ -977,35 +976,35 @@ class System(FidesModel):
         description="Whether this system requires data protection impact assessments.",
     )
     dpa_location: Optional[str] = Field(
-        description="Location where the DPAs or DIPAs can be found."
+        default=None, description="Location where the DPAs or DIPAs can be found."
     )
     dpa_progress: Optional[str] = Field(
-        description="The optional status of a Data Protection Impact Assessment"
+        default=None, description="The optional status of a Data Protection Impact Assessment"
     )
     privacy_policy: Optional[AnyUrl] = Field(
-        description="A URL that points to the system's publicly accessible privacy policy."
+        default=None, description="A URL that points to the system's publicly accessible privacy policy."
     )
     legal_name: Optional[str] = Field(
-        description="The legal name for the business represented by the system."
+        default=None, description="The legal name for the business represented by the system."
     )
     legal_address: Optional[str] = Field(
-        description="The legal address for the business represented by the system."
+        default=None, description="The legal address for the business represented by the system."
     )
     responsibility: List[DataResponsibilityTitle] = Field(
         default_factory=list,
         description=DataResponsibilityTitle.__doc__,
     )
     dpo: Optional[str] = Field(
-        description="The official privacy contact address or DPO."
+        default=None, description="The official privacy contact address or DPO."
     )
     joint_controller_info: Optional[str] = Field(
-        description="The party or parties that share the responsibility for processing personal data."
+        default=None, description="The party or parties that share the responsibility for processing personal data."
     )
     data_security_practices: Optional[str] = Field(
-        description="The data security practices employed by this system."
+        default=None, description="The data security practices employed by this system."
     )
     cookie_max_age_seconds: Optional[int] = Field(
-        description="The maximum storage duration, in seconds, for cookies used by this system."
+        default=None, description="The maximum storage duration, in seconds, for cookies used by this system."
     )
     uses_cookies: bool = Field(
         default=False, description="Whether this system uses cookie storage."
@@ -1019,10 +1018,10 @@ class System(FidesModel):
         description="Whether the system uses non-cookie methods of storage or accessing information stored on a user's device.",
     )
     legitimate_interest_disclosure_url: Optional[AnyUrl] = Field(
-        description="A URL that points to the system's publicly accessible legitimate interest disclosure."
+        default=None, description="A URL that points to the system's publicly accessible legitimate interest disclosure."
     )
     cookies: Optional[List[Cookies]] = Field(
-        description="System-level cookies unassociated with a data use to deliver services and functionality",
+        default=None, description="System-level cookies unassociated with a data use to deliver services and functionality",
     )
 
     _sort_privacy_declarations: classmethod = validator(
