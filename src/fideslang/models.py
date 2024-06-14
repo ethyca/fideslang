@@ -434,17 +434,17 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
             )
         return meta_values
 
-    @field_validator("fields")
+    @model_validator()
     @classmethod
     def validate_object_fields(  # type: ignore
         cls,
-        fields: Optional[List["DatasetField"]],
         values: Dict[str, Any],
     ) -> Optional[List["DatasetField"]]:
         """Two validation checks for object fields:
         - If there are sub-fields specified, type should be either empty or 'object'
         - Additionally object fields cannot have data_categories.
         """
+        fields = values.get("fields")
         declared_data_type = None
         field_name: str = values.get("name")  # type: ignore
 
@@ -463,7 +463,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
                 f"Object field '{field_name}' cannot have specified data_categories. Specify category on sub-field instead"
             )
 
-        return fields
+        return values
 
 
 # this is required for the recursive reference in the pydantic model:
@@ -1056,6 +1056,7 @@ class System(FidesModel):
                     ], f"PrivacyDeclaration '{value.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
         return value
+
     model_config = ConfigDict(use_enum_values=True)
 
 
