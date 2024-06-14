@@ -53,9 +53,9 @@ is_deprecated_if_replaced_validator = validator("replaced_by", allow_reuse=True)
 )
 
 # Reusable Fields
-name_field = Field(description="Human-Readable name for this resource.")
+name_field = Field(default=None, description="Human-Readable name for this resource.")
 description_field = Field(
-    description="A detailed description of what this resource is."
+    default=None, description="A detailed description of what this resource is."
 )
 meta_field = Field(
     default=None,
