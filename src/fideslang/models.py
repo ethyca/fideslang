@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import (
     AnyUrl,
     BaseModel,
-    ConstrainedStr,
+    StringConstraints,
     Field,
     HttpUrl,
     PositiveInt,
@@ -246,7 +246,7 @@ class SpecialCategoryLegalBasisEnum(str, Enum):
 class DataCategory(FidesModel, DefaultModel):
     """The DataCategory resource model."""
 
-    parent_key: Optional[FidesKey]
+    parent_key: Optional[FidesKey] = None
 
     _matching_parent_key: classmethod = matching_parent_key_validator
     _no_self_reference: classmethod = no_self_reference_validator
@@ -301,6 +301,7 @@ class DataSubject(FidesModel, DefaultModel):
 
     rights: Optional[DataSubjectRights] = Field(description=DataSubjectRights.__doc__)
     automated_decisions_or_profiling: Optional[bool] = Field(
+        default=False,
         description="A boolean value to annotate whether or not automated decisions/profiling exists for the data subject.",
     )
 
@@ -369,6 +370,7 @@ class FidesMeta(BaseModel):
         description="The type of the identity data that should be used to query this collection for a DSR."
     )
     primary_key: Optional[bool] = Field(
+        default=False,
         description="Whether the current field can be considered a primary key of the current collection"
     )
     data_type: Optional[str] = Field(
@@ -378,9 +380,11 @@ class FidesMeta(BaseModel):
         description="Optionally specify the allowable field length. Fides will not generate values that exceed this size."
     )
     return_all_elements: Optional[bool] = Field(
+        default=False,
         description="Optionally specify to query for the entire array if the array is an entrypoint into the node. Default is False."
     )
     read_only: Optional[bool] = Field(
+        default=False,
         description="Optionally specify if a field is read-only, meaning it can't be updated or deleted."
     )
 
@@ -471,7 +475,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
 DatasetField.update_forward_refs()
 
 
-class FidesCollectionKey(ConstrainedStr):
+class FidesCollectionKey(StringConstraints):
     """
     Dataset.Collection name where both dataset and collection names are valid FidesKeys
     """

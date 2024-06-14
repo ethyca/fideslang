@@ -6,7 +6,7 @@ from collections import Counter
 from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
 
 from packaging.version import Version
-from pydantic import ConstrainedStr
+from pydantic import StringConstraints
 
 
 class FidesValidationError(ValueError):
@@ -26,7 +26,7 @@ class FidesVersion(Version):
         return Version(value)
 
 
-class FidesKey(ConstrainedStr):
+class FidesKey(StringConstraints):
     """
     A FidesKey type that creates a custom constrained string.
     """

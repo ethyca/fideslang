@@ -4,7 +4,6 @@ from typing import Any, Dict
 
 import pytest
 import yaml
-
 from fideslang import models
 
 
