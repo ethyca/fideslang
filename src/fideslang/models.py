@@ -297,7 +297,7 @@ class DataSubject(FidesModel, DefaultModel):
 
     rights: Optional[DataSubjectRights] = Field(default=None, description=DataSubjectRights.__doc__)
     automated_decisions_or_profiling: Optional[bool] = Field(
-        default=False,
+        default=None,
         description="A boolean value to annotate whether or not automated decisions/profiling exists for the data subject.",
     )
 
@@ -366,7 +366,7 @@ class FidesMeta(BaseModel):
         default=None, description="The type of the identity data that should be used to query this collection for a DSR."
     )
     primary_key: Optional[bool] = Field(
-        default=False,
+        default=None,
         description="Whether the current field can be considered a primary key of the current collection"
     )
     data_type: Optional[str] = Field(
@@ -380,7 +380,7 @@ class FidesMeta(BaseModel):
         description="Optionally specify to query for the entire array if the array is an entrypoint into the node. Default is False."
     )
     read_only: Optional[bool] = Field(
-        default=False,
+        default=None,
         description="Optionally specify if a field is read-only, meaning it can't be updated or deleted."
     )
 
