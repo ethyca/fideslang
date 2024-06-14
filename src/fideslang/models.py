@@ -74,11 +74,7 @@ class FidesModel(BaseModel):
     tags: Optional[List[str]] = None
     name: Optional[str] = name_field
     description: Optional[str] = description_field
-
-    class Config:
-        "Config for the FidesModel"
-        extra = "ignore"
-        orm_mode = True
+    model_config = ConfigDict(extra="ignore", from_attributes=True)
 
 
 class DefaultModel(BaseModel):
@@ -259,10 +255,7 @@ class Cookies(BaseModel):
     path: Optional[str]
     domain: Optional[str]
 
-    class Config:
-        """Config for the cookies"""
-
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DataSubjectRights(BaseModel):
@@ -643,11 +636,7 @@ class Evaluation(BaseModel):
         default="",
         description="A human-readable string response for the evaluation.",
     )
-
-    class Config:
-        "Config for the Evaluation"
-        extra = "ignore"
-        orm_mode = True
+    model_config = ConfigDict(extra="ignore", from_attributes=True)
 
 
 # Organization
@@ -836,11 +825,7 @@ class PrivacyDeclaration(BaseModel):
     cookies: Optional[List[Cookies]] = Field(
         description="Cookies associated with this data use to deliver services and functionality",
     )
-
-    class Config:
-        """Config for the Privacy Declaration"""
-
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SystemMetadata(BaseModel):
@@ -1069,11 +1054,7 @@ class System(FidesModel):
                     ], f"PrivacyDeclaration '{value.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
         return value
-
-    class Config:
-        """Class for the System config"""
-
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 
 # Taxonomy
