@@ -4,6 +4,7 @@ Contains all of the additional validation for the resource models.
 import re
 from collections import Counter
 from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
+from typing_extensions import Annotated
 
 from packaging.version import Version
 from pydantic import StringConstraints
@@ -29,23 +30,7 @@ class FidesVersion(Version):
         return Version(value)
 
 
-class FidesKey(StringConstraints):
-    """
-    A FidesKey type that creates a custom constrained string.
-    """
-
-    regex: Pattern[str] = re.compile(r"^[a-zA-Z0-9_.<>-]+$")
-
-    @classmethod  # This overrides the default method to throw the custom FidesValidationError
-    def validate(cls, value: str) -> str:
-        """Throws ValueError if val is not a valid FidesKey"""
-
-        if not cls.regex.match(value):
-            raise FidesValidationError(
-                f"FidesKeys must only contain alphanumeric characters, '.', '_', '<', '>' or '-'. Value provided: {value}"
-            )
-
-        return value
+FidesKey = Annotated[str, StringConstraints(pattern="^[a-zA-Z0-9_.<>-]+$")]
 
 
 def sort_list_objects_by_name(values: List) -> List:
@@ -83,7 +68,7 @@ def no_self_reference(value: FidesKey, values: Dict) -> FidesKey:
 
     i.e. DataCategory.parent_key != DataCategory.fides_key
     """
-    fides_key = FidesKey.validate(values.get("fides_key", ""))
+    fides_key = FidesKey(values.get("fides_key", ""))
     if value == fides_key:
         raise FidesValidationError("FidesKey can not self-reference!")
     return value
@@ -155,7 +140,7 @@ def matching_parent_key(parent_key: FidesKey, values: Dict) -> FidesKey:
     Confirm that the parent_key matches the parent parsed from the FidesKey.
     """
 
-    fides_key = FidesKey.validate(values.get("fides_key", ""))
+    fides_key = FidesKey(values.get("fides_key", ""))
     split_fides_key = fides_key.split(".")
 
     # Check if it is a top-level resource
