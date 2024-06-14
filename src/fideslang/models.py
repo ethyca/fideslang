@@ -876,7 +876,7 @@ class DataFlow(BaseModel):
         default=None, description="An array of data categories describing the data in transit.",
     )
 
-    @model_validator(skip_on_failure=True, mode="after")
+    @model_validator(mode="after")
     @classmethod
     def user_special_case(cls, values: Dict) -> Dict:
         """
