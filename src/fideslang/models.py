@@ -1029,33 +1029,33 @@ class System(FidesModel):
         "privacy_declarations", allow_reuse=True
     )(sort_list_objects_by_name)
 
-    @validator("privacy_declarations", each_item=True)
+    @model_validator()
     @classmethod
     def privacy_declarations_reference_data_flows(
         cls,
-        value: PrivacyDeclaration,
         values: Dict,
     ) -> PrivacyDeclaration:
         """
         Any `PrivacyDeclaration`s which include `egress` and/or `ingress` fields must
         only reference the `fides_key`s of defined `DataFlow`s in said field(s).
         """
+        privacy_declarations = values.get("privacy_declarations") or []
+        for privacy_declaration in privacy_declarations:
+            for direction in ["egress", "ingress"]:
+                fides_keys = getattr(privacy_declaration, direction, None)
+                if fides_keys is not None:
+                    data_flows = values[direction]
+                    system = values["fides_key"]
+                    assert (
+                        data_flows is not None and len(data_flows) > 0
+                    ), f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with one or more resources and is applied to the System '{system}', which does not itself define any {direction}."
 
-        for direction in ["egress", "ingress"]:
-            fides_keys = getattr(value, direction, None)
-            if fides_keys is not None:
-                data_flows = values[direction]
-                system = values["fides_key"]
-                assert (
-                    data_flows is not None and len(data_flows) > 0
-                ), f"PrivacyDeclaration '{value.name}' defines {direction} with one or more resources and is applied to the System '{system}', which does not itself define any {direction}."
+                    for fides_key in fides_keys:
+                        assert fides_key in [
+                            data_flow.fides_key for data_flow in data_flows
+                        ], f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
-                for fides_key in fides_keys:
-                    assert fides_key in [
-                        data_flow.fides_key for data_flow in data_flows
-                    ], f"PrivacyDeclaration '{value.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
-
-        return value
+        return values
 
     model_config = ConfigDict(use_enum_values=True)
 
