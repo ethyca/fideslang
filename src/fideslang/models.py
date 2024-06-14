@@ -107,7 +107,7 @@ class DefaultModel(BaseModel):
     )
     _is_deprecated_if_replaced: classmethod = is_deprecated_if_replaced_validator
 
-    @validator("version_added")
+    @field_validator("version_added")
     @classmethod
     def validate_verion_added(
         cls, version_added: Optional[str], values: Dict
@@ -121,7 +121,7 @@ class DefaultModel(BaseModel):
         FidesVersion.validate(version_added)
         return version_added
 
-    @validator("version_deprecated")
+    @field_validator("version_deprecated")
     @classmethod
     def validate_version_deprecated(
         cls, version_deprecated: Optional[str], values: Dict
@@ -434,7 +434,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
             )
         return meta_values
 
-    @validator("fields")
+    @field_validator("fields")
     @classmethod
     def validate_object_fields(  # type: ignore
         cls,
