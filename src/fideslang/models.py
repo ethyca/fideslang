@@ -380,7 +380,7 @@ class FidesMeta(BaseModel):
         description="Optionally specify if a field is read-only, meaning it can't be updated or deleted."
     )
 
-    @validator("data_type")
+    @field_validator("data_type")
     @classmethod
     def valid_data_type(cls, value: Optional[str]) -> Optional[str]:
         """Validate that all annotated data types exist in the taxonomy"""
@@ -415,7 +415,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         description="An optional array of objects that describe hierarchical/nested fields (typically found in NoSQL databases).",
     )
 
-    @validator("fides_meta")
+    @field_validator("fides_meta")
     @classmethod
     def valid_meta(cls, meta_values: Optional[FidesMeta]) -> Optional[FidesMeta]:
         """Validate upfront that the return_all_elements flag can only be specified on array fields"""
@@ -889,7 +889,7 @@ class DataFlow(BaseModel):
 
         return values
 
-    @validator("type")
+    @field_validator("type")
     @classmethod
     def verify_type_is_flowable(cls, value: str) -> str:
         """
