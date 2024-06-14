@@ -4,6 +4,7 @@
 Contains all of the Fides resources modeled as Pydantic models.
 """
 from __future__ import annotations
+from pydantic_core import core_schema
 
 from datetime import datetime
 from enum import Enum
@@ -375,7 +376,7 @@ class FidesMeta(BaseModel):
         default=None, description="Optionally specify the allowable field length. Fides will not generate values that exceed this size."
     )
     return_all_elements: Optional[bool] = Field(
-        default=False,
+        default=None,
         description="Optionally specify to query for the entire array if the array is an entrypoint into the node. Default is False."
     )
     read_only: Optional[bool] = Field(
@@ -449,7 +450,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         field_name: str = values.get("name")  # type: ignore
 
         if values.get("fides_meta"):
-            declared_data_type = values["fides_meta"].data_type
+            declared_data_type = values["fides_meta"].get("data_type")
 
         if fields and declared_data_type:
             data_type, _ = parse_data_type_string(declared_data_type)
@@ -475,8 +476,16 @@ class FidesCollectionKey(StringConstraints):
     Dataset.Collection name where both dataset and collection names are valid FidesKeys
     """
 
+    """Validate strings as proper semantic versions."""
+
     @classmethod
-    def validate(cls, value: str) -> str:
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_before_validator_function(
+            cls.validate, handler(str), field_name=handler.field_name
+        )
+
+    @classmethod
+    def validate(cls, value: str, _: Optional[ValidationInfo] = None) -> str:
         """
         Overrides validation to check FidesCollectionKey format, and that both the dataset
         and collection names have the FidesKey format.
@@ -1044,7 +1053,7 @@ class System(FidesModel):
             for direction in ["egress", "ingress"]:
                 fides_keys = getattr(privacy_declaration, direction, None)
                 if fides_keys is not None:
-                    data_flows = values[direction]
+                    data_flows = values.get(direction)
                     system = values["fides_key"]
                     assert (
                         data_flows is not None and len(data_flows) > 0

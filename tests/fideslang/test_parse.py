@@ -7,7 +7,7 @@ from fideslang import parse
 @pytest.mark.unit
 def test_parse_manifest():
     expected_result = models.DataCategory(
-        organization_fides_key=1,
+        organization_fides_key="1",
         fides_key="some_resource",
         name="Test resource 1",
         description="Test Description",

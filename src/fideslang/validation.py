@@ -21,7 +21,7 @@ class FidesVersion(Version):
     @classmethod
     def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
         return core_schema.with_info_before_validator_function(
-            cls.validate, handler(date), field_name=handler.field_name
+            cls.validate, handler(str), field_name=handler.field_name
         )
 
     @classmethod
@@ -30,7 +30,29 @@ class FidesVersion(Version):
         return Version(value)
 
 
-FidesKey = Annotated[str, StringConstraints(pattern="^[a-zA-Z0-9_.<>-]+$")]
+class FidesKey(StringConstraints):
+    """
+    A FidesKey type that creates a custom constrained string.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_before_validator_function(
+            cls.validate, handler(str), field_name=handler.field_name
+        )
+
+    regex: Pattern[str] = re.compile(r"^[a-zA-Z0-9_.<>-]+$")
+
+    @classmethod  # This overrides the default method to throw the custom FidesValidationError
+    def validate(cls, value: str, _: Optional[ValidationInfo] = None) -> str:
+        """Throws ValueError if val is not a valid FidesKey"""
+
+        if not cls.regex.match(value):
+            raise FidesValidationError(
+                f"FidesKeys must only contain alphanumeric characters, '.', '_', '<', '>' or '-'. Value provided: {value}"
+            )
+
+        return value
 
 
 def sort_list_objects_by_name(values: List) -> List:
@@ -68,7 +90,7 @@ def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:
 
     i.e. DataCategory.parent_key != DataCategory.fides_key
     """
-    fides_key = FidesKey(values.data.get("fides_key", ""))
+    fides_key = FidesKey.validate(values.data.get("fides_key", ""))
     if value == fides_key:
         raise FidesValidationError("FidesKey can not self-reference!")
     return value
@@ -140,7 +162,7 @@ def matching_parent_key(parent_key: FidesKey, values: ValidationInfo) -> FidesKe
     Confirm that the parent_key matches the parent parsed from the FidesKey.
     """
 
-    fides_key = FidesKey(values.data.get("fides_key", ""))
+    fides_key = FidesKey.validate(values.data.get("fides_key", ""))
     split_fides_key = fides_key.split(".")
 
     # Check if it is a top-level resource
