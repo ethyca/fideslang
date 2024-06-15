@@ -435,7 +435,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
             )
         return meta_values
 
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     @classmethod
     def validate_object_fields(  # type: ignore
         cls,
@@ -445,12 +445,12 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         - If there are sub-fields specified, type should be either empty or 'object'
         - Additionally object fields cannot have data_categories.
         """
-        fields = values.get("fields")
+        fields = values.fields
         declared_data_type = None
-        field_name: str = values.get("name")  # type: ignore
+        field_name: str = values.name  # type: ignore
 
-        if values.get("fides_meta"):
-            declared_data_type = values["fides_meta"].get("data_type")
+        if values.fides_meta:
+            declared_data_type = values.fides_meta.data_type
 
         if fields and declared_data_type:
             data_type, _ = parse_data_type_string(declared_data_type)
@@ -459,7 +459,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
                     f"The data type '{data_type}' on field '{field_name}' is not compatible with specified sub-fields. Convert to an 'object' field."
                 )
 
-        if (fields or declared_data_type == "object") and values.get("data_categories"):
+        if (fields or declared_data_type == "object") and values.data_categories:
             raise ValueError(
                 f"Object field '{field_name}' cannot have specified data_categories. Specify category on sub-field instead"
             )
@@ -471,7 +471,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
 DatasetField.update_forward_refs()
 
 
-class FidesCollectionKey(StringConstraints):
+class FidesCollectionKey(str):  # TODO what is the best way to define this custom string type?
     """
     Dataset.Collection name where both dataset and collection names are valid FidesKeys
     """

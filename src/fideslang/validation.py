@@ -15,22 +15,22 @@ class FidesValidationError(ValueError):
     """Custom exception for when the pydantic ValidationError can't be used."""
 
 
-class FidesVersion(Version):
+class FidesVersion(Version):  # TODO what is the best way to define this class?
     """Validate strings as proper semantic versions."""
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
-        return core_schema.with_info_before_validator_function(
-            cls.validate, handler(str), field_name=handler.field_name
-        )
+        return core_schema.no_info_after_validator_function(cls.validate)
 
     @classmethod
     def validate(cls, value: str) -> Version:
-        """Validates that the provided string is a valid Seman. tic Version."""
-        return Version(value)
+        """Validates that the provided string is a valid Semantic Version."""
+        if isinstance(value, str):
+            return Version(value)
+        return value
 
 
-class FidesKey(StringConstraints):
+class FidesKey(str):  # TODO - what is the best way to create this custom str type?
     """
     A FidesKey type that creates a custom constrained string.
     """
@@ -46,6 +46,12 @@ class FidesKey(StringConstraints):
     @classmethod  # This overrides the default method to throw the custom FidesValidationError
     def validate(cls, value: str, _: Optional[ValidationInfo] = None) -> str:
         """Throws ValueError if val is not a valid FidesKey"""
+        # TODO previously FidesKey would coerce to a string if it could, but with Pydantic,
+        # that's not the pattern. How should we approach here?
+        try:
+            value = str(value)
+        except ValueError:
+            raise Exception("Cannot coerce to string")
 
         if not cls.regex.match(value):
             raise FidesValidationError(
@@ -109,12 +115,17 @@ def deprecated_version_later_than_added(
     if not version_deprecated:
         return None
 
-    if version_deprecated < values.data.get("version_added", Version("0")):
+    version_added = values.data.get("version_added")
+    version_added = FidesVersion(version_added) if version_added else Version("0")
+    # Why is version_deprecated a string here and not already a FidesVersion?
+    version_deprecated = FidesVersion(version_deprecated)
+
+    if version_deprecated < version_added:
         raise FidesValidationError(
             "Deprecated version number can't be earlier than version added!"
         )
 
-    if version_deprecated == values.data.get("version_added", Version("0")):
+    if version_deprecated == version_added:
         raise FidesValidationError(
             "Deprecated version number can't be the same as the version added!"
         )

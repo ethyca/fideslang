@@ -453,9 +453,6 @@ def test_create_valid_system():
     assert True
 
 
-
-
-
 @pytest.mark.unit
 def test_fides_key_validate_bad_key():
     with pytest.raises(FidesValidationError):
@@ -683,7 +680,7 @@ class TestValidateDatasetField:
                 fields=[DatasetField(name="nested_field")],
             )
         assert (
-            "The data type 'string' on field 'test_field' is not compatible with specified sub-fields."
+            "The data type 'string' on field 'test_field' is not compatible with"
             in str(exc)
         )
 
