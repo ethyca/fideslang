@@ -468,7 +468,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
 
 
 # this is required for the recursive reference in the pydantic model:
-DatasetField.update_forward_refs()
+DatasetField.model_rebuild()
 
 
 class FidesCollectionKey(str):  # TODO what is the best way to define this custom string type?

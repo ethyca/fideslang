@@ -85,7 +85,7 @@ class TestVersioning:
     @pytest.mark.parametrize("TaxonomyClass", DEFAULT_TAXONOMY_CLASSES)
     def test_built_from_dict_with_empty_versions(self, TaxonomyClass) -> None:
         """Try building from a dictionary with explicit None values."""
-        TaxonomyClass.parse_obj(
+        TaxonomyClass.model_validate(
             {
                 "organization_fides_key": 1,
                 "fides_key": "user",
