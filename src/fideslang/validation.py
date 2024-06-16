@@ -16,15 +16,6 @@ class FidesValidationError(ValueError):
     """Custom exception for when the pydantic ValidationError can't be used."""
 
 
-class FidesVersion(Version):
-    """Validate strings as proper semantic versions."""
-
-    @classmethod
-    def validate(cls, value: str) -> Version:
-        """Validates that the provided string is a valid Semantic Version."""
-        return Version(value)
-
-
 def validate_fides_key(value: str) -> str:
     """Throws ValueError if val is not a valid FidesKey"""
 
@@ -37,6 +28,7 @@ def validate_fides_key(value: str) -> str:
 
 
 FidesKey = Annotated[str, BeforeValidator(validate_fides_key)]
+
 
 def sort_list_objects_by_name(values: List) -> List:
     """
@@ -95,8 +87,8 @@ def deprecated_version_later_than_added(
     version_added: Optional[str] = values.data.get("version_added")
 
     # Convert into Versions
-    transformed_version_added = FidesVersion(version_added) if version_added else Version("0")
-    transformed_version_deprecated = FidesVersion(version_deprecated)
+    transformed_version_added: Version = Version(version_added) if version_added else Version("0")
+    transformed_version_deprecated: Version = Version(version_deprecated)
 
     if transformed_version_deprecated < transformed_version_added:
         raise FidesValidationError(

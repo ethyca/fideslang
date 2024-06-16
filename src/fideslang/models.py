@@ -6,6 +6,7 @@ Contains all of the Fides resources modeled as Pydantic models.
 from __future__ import annotations
 from typing_extensions import Annotated
 
+from packaging.version import Version
 from pydantic_core import core_schema
 from pydantic import StringConstraints, ValidationInfo, BeforeValidator
 
@@ -28,7 +29,6 @@ from pydantic import (
 
 from fideslang.validation import (
     FidesKey,
-    FidesVersion,
     deprecated_version_later_than_added,
     has_versioning_if_default,
     is_deprecated_if_replaced,
@@ -118,12 +118,12 @@ class DefaultModel(BaseModel):
         cls, version_added: Optional[str]
     ) -> Optional[str]:
         """
-        Validate that the `version_added` field is a proper FidesVersion
+        Validate that the `version_added` field is a proper Version
         """
         if not version_added:
             return None
 
-        FidesVersion.validate(version_added)
+        Version(version_added)
         return version_added
 
     @field_validator("version_deprecated")
@@ -132,12 +132,12 @@ class DefaultModel(BaseModel):
         cls, version_deprecated: Optional[str]
     ) -> Optional[str]:
         """
-        Validate that the `version_deprecated` is a proper FidesVersion
+        Validate that the `version_deprecated` is a proper Version
         """
         if not version_deprecated:
             return None
 
-        FidesVersion.validate(version_deprecated)
+        Version(version_deprecated)
         return version_deprecated
 
 
