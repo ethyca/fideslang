@@ -13,7 +13,7 @@ def test_parse_manifest():
         description="Test Description",
     )
     test_dict = {
-        "organization_fides_key": 1,
+        "organization_fides_key": "1",
         "fides_key": "some_resource",
         "name": "Test resource 1",
         "description": "Test Description",
@@ -26,7 +26,7 @@ def test_parse_manifest():
 def test_parse_manifest_no_fides_key_validation_error():
     with pytest.raises(SystemExit):
         test_dict = {
-            "organization_fides_key": 1,
+            "organization_fides_key": "1",
             "name": "Test resource 1",
             "description": "Test Description",
         }
@@ -38,7 +38,7 @@ def test_parse_manifest_no_fides_key_validation_error():
 def test_parse_manifest_resource_type_error():
     with pytest.raises(SystemExit):
         test_dict = {
-            "organization_fides_key": 1,
+            "organization_fides_key": "1",
             "fides_key": "some_resource",
             "name": "Test resource 1",
             "description": "Test Description",

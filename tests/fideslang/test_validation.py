@@ -21,7 +21,7 @@ from fideslang.models import (
     PrivacyRule,
     System,
 )
-from fideslang.validation import FidesKey, FidesValidationError, valid_data_type
+from fideslang.validation import FidesKey, FidesValidationError, valid_data_type, validate_fides_key
 
 DEFAULT_TAXONOMY_CLASSES = [DataCategory, DataUse, DataSubject]
 
@@ -87,7 +87,7 @@ class TestVersioning:
         """Try building from a dictionary with explicit None values."""
         TaxonomyClass.model_validate(
             {
-                "organization_fides_key": 1,
+                "organization_fides_key": "1",
                 "fides_key": "user",
                 "name": "Custom Test Data",
                 "description": "Custom Test Data Category",
@@ -156,7 +156,7 @@ class TestVersioning:
     @pytest.mark.parametrize("TaxonomyClass", DEFAULT_TAXONOMY_CLASSES)
     def test_version_error(self, TaxonomyClass):
         """Check that versions are validated."""
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError) as exc:
             TaxonomyClass(
                 organization_fides_key="1",
                 fides_key="user",
@@ -456,12 +456,11 @@ def test_create_valid_system():
 @pytest.mark.unit
 def test_fides_key_validate_bad_key():
     with pytest.raises(FidesValidationError):
-        FidesKey.validate("hi!")
-
+        validate_fides_key("hi!")
 
 @pytest.mark.unit
 def test_fides_key_validate_good_key():
-    FidesKey.validate("hello_test_file<backup>.txt")
+    validate_fides_key("hello_test_file<backup>.txt")
 
 
 @pytest.mark.unit

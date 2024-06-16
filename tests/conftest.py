@@ -111,7 +111,7 @@ def test_manifests():
             "dataset": [
                 {
                     "name": "Test Dataset 1",
-                    "organization_fides_key": 1,
+                    "organization_fides_key": "1",
                     "datasetType": {},
                     "datasetLocation": "somedb:3306",
                     "description": "Test Dataset 1",
@@ -122,7 +122,7 @@ def test_manifests():
             "system": [
                 {
                     "name": "Test System 1",
-                    "organization_fides_key": 1,
+                    "organization_fides_key": "1",
                     "systemType": "mysql",
                     "description": "Test System 1",
                     "fides_key": "some_system",
@@ -134,7 +134,7 @@ def test_manifests():
                 {
                     "name": "Test Dataset 2",
                     "description": "Test Dataset 2",
-                    "organization_fides_key": 1,
+                    "organization_fides_key": "1",
                     "datasetType": {},
                     "datasetLocation": "somedb:3306",
                     "fides_key": "another_dataset",
@@ -144,7 +144,7 @@ def test_manifests():
             "system": [
                 {
                     "name": "Test System 2",
-                    "organization_fides_key": 1,
+                    "organization_fides_key": "1",
                     "systemType": "mysql",
                     "description": "Test System 2",
                     "fides_key": "another_system",

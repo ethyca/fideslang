@@ -7,59 +7,36 @@ from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
 from typing_extensions import Annotated
 
 from packaging.version import Version
-from pydantic import StringConstraints, ValidationInfo
-from pydantic_core import core_schema
+from pydantic import StringConstraints, ValidationInfo, BeforeValidator
+
+FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
 
 
 class FidesValidationError(ValueError):
     """Custom exception for when the pydantic ValidationError can't be used."""
 
 
-class FidesVersion(Version):  # TODO what is the best way to define this class?
+class FidesVersion(Version):
     """Validate strings as proper semantic versions."""
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
-        return core_schema.no_info_after_validator_function(cls.validate)
 
     @classmethod
     def validate(cls, value: str) -> Version:
         """Validates that the provided string is a valid Semantic Version."""
-        if isinstance(value, str):
-            return Version(value)
-        return value
+        return Version(value)
 
 
-class FidesKey(str):  # TODO - what is the best way to create this custom str type?
-    """
-    A FidesKey type that creates a custom constrained string.
-    """
+def validate_fides_key(value: str) -> str:
+    """Throws ValueError if val is not a valid FidesKey"""
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
-        return core_schema.with_info_before_validator_function(
-            cls.validate, handler(str), field_name=handler.field_name
+    regex: Pattern[str] = re.compile(FIDES_KEY_PATTERN)
+    if not regex.match(value):
+        raise FidesValidationError(
+            f"FidesKeys must only contain alphanumeric characters, '.', '_', '<', '>' or '-'. Value provided: {value}"
         )
+    return value
 
-    regex: Pattern[str] = re.compile(r"^[a-zA-Z0-9_.<>-]+$")
 
-    @classmethod  # This overrides the default method to throw the custom FidesValidationError
-    def validate(cls, value: str, _: Optional[ValidationInfo] = None) -> str:
-        """Throws ValueError if val is not a valid FidesKey"""
-        # TODO previously FidesKey would coerce to a string if it could, but with Pydantic,
-        # that's not the pattern. How should we approach here?
-        try:
-            value = str(value)
-        except ValueError:
-            raise Exception("Cannot coerce to string")
-
-        if not cls.regex.match(value):
-            raise FidesValidationError(
-                f"FidesKeys must only contain alphanumeric characters, '.', '_', '<', '>' or '-'. Value provided: {value}"
-            )
-
-        return value
-
+FidesKey = Annotated[str, BeforeValidator(validate_fides_key)]
 
 def sort_list_objects_by_name(values: List) -> List:
     """
@@ -96,15 +73,15 @@ def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:
 
     i.e. DataCategory.parent_key != DataCategory.fides_key
     """
-    fides_key = FidesKey.validate(values.data.get("fides_key", ""))
+    fides_key = validate_fides_key(values.data.get("fides_key", ""))
     if value == fides_key:
         raise FidesValidationError("FidesKey can not self-reference!")
     return value
 
 
 def deprecated_version_later_than_added(
-    version_deprecated: Optional[FidesVersion], values: ValidationInfo
-) -> Optional[FidesVersion]:
+    version_deprecated: Optional[str], values: ValidationInfo
+) -> Optional[str]:
     """
     Check to make sure that the deprecated version is later than the added version.
 
@@ -115,17 +92,18 @@ def deprecated_version_later_than_added(
     if not version_deprecated:
         return None
 
-    version_added = values.data.get("version_added")
-    version_added = FidesVersion(version_added) if version_added else Version("0")
-    # Why is version_deprecated a string here and not already a FidesVersion?
-    version_deprecated = FidesVersion(version_deprecated)
+    version_added: Optional[str] = values.data.get("version_added")
 
-    if version_deprecated < version_added:
+    # Convert into Versions
+    transformed_version_added = FidesVersion(version_added) if version_added else Version("0")
+    transformed_version_deprecated = FidesVersion(version_deprecated)
+
+    if transformed_version_deprecated < transformed_version_added:
         raise FidesValidationError(
             "Deprecated version number can't be earlier than version added!"
         )
 
-    if version_deprecated == version_added:
+    if transformed_version_deprecated == transformed_version_added:
         raise FidesValidationError(
             "Deprecated version number can't be the same as the version added!"
         )
@@ -173,7 +151,7 @@ def matching_parent_key(parent_key: FidesKey, values: ValidationInfo) -> FidesKe
     Confirm that the parent_key matches the parent parsed from the FidesKey.
     """
 
-    fides_key = FidesKey.validate(values.data.get("fides_key", ""))
+    fides_key = validate_fides_key(values.data.get("fides_key", ""))
     split_fides_key = fides_key.split(".")
 
     # Check if it is a top-level resource

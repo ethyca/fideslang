@@ -34,7 +34,7 @@ from fideslang.validation import (
     parse_data_type_string,
     sort_list_objects_by_name,
     unique_items_in_list,
-    valid_data_type,
+    valid_data_type, validate_fides_key,
 )
 
 matching_parent_key_validator = field_validator("parent_key")(
@@ -492,8 +492,8 @@ class FidesCollectionKey(str):  # TODO what is the best way to define this custo
         """
         values = value.split(".")
         if len(values) == 2:
-            FidesKey.validate(values[0])
-            FidesKey.validate(values[1])
+            validate_fides_key(values[0])
+            validate_fides_key(values[1])
             return value
         raise ValueError(
             "FidesCollection must be specified in the form 'FidesKey.FidesKey'"
