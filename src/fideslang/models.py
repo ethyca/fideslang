@@ -4,7 +4,10 @@
 Contains all of the Fides resources modeled as Pydantic models.
 """
 from __future__ import annotations
+from typing_extensions import Annotated
+
 from pydantic_core import core_schema
+from pydantic import StringConstraints, ValidationInfo, BeforeValidator
 
 from datetime import datetime
 from enum import Enum
@@ -471,33 +474,22 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
 DatasetField.model_rebuild()
 
 
-class FidesCollectionKey(str):  # TODO what is the best way to define this custom string type?
+def validate_fides_collection_key(value: str) -> str:
     """
-    Dataset.Collection name where both dataset and collection names are valid FidesKeys
+    Overrides validation to check FidesCollectionKey format, and that both the dataset
+    and collection names have the FidesKey format.
     """
+    values = value.split(".")
+    if len(values) == 2:
+        validate_fides_key(values[0])
+        validate_fides_key(values[1])
+        return value
+    raise ValueError(
+        "FidesCollection must be specified in the form 'FidesKey.FidesKey'"
+    )
 
-    """Validate strings as proper semantic versions."""
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
-        return core_schema.with_info_before_validator_function(
-            cls.validate, handler(str), field_name=handler.field_name
-        )
-
-    @classmethod
-    def validate(cls, value: str, _: Optional[ValidationInfo] = None) -> str:
-        """
-        Overrides validation to check FidesCollectionKey format, and that both the dataset
-        and collection names have the FidesKey format.
-        """
-        values = value.split(".")
-        if len(values) == 2:
-            validate_fides_key(values[0])
-            validate_fides_key(values[1])
-            return value
-        raise ValueError(
-            "FidesCollection must be specified in the form 'FidesKey.FidesKey'"
-        )
+FidesCollectionKey = Annotated[str, BeforeValidator(validate_fides_collection_key)]
 
 
 class CollectionMeta(BaseModel):
