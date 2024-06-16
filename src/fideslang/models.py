@@ -6,8 +6,7 @@ Contains all of the Fides resources modeled as Pydantic models.
 from __future__ import annotations
 from typing_extensions import Annotated
 
-from packaging.version import Version
-from pydantic_core import core_schema
+from packaging.version import InvalidVersion, Version
 from pydantic import StringConstraints, ValidationInfo, BeforeValidator
 
 from datetime import datetime
@@ -37,7 +36,7 @@ from fideslang.validation import (
     parse_data_type_string,
     sort_list_objects_by_name,
     unique_items_in_list,
-    valid_data_type, validate_fides_key,
+    valid_data_type, validate_fides_key, FidesValidationError,
 )
 
 matching_parent_key_validator = field_validator("parent_key")(
@@ -57,7 +56,7 @@ is_deprecated_if_replaced_validator = field_validator("replaced_by")(
 )
 
 # Reusable Fields
-name_field = Field(default=None, description="Human-Readable name for this resource.")
+name_field = Field(description="Human-Readable name for this resource.")
 description_field = Field(
     default=None, description="A detailed description of what this resource is."
 )
@@ -78,7 +77,7 @@ class FidesModel(BaseModel):
         description="Defines the Organization that this resource belongs to.",
     )
     tags: Optional[List[str]] = None
-    name: Optional[str] = name_field
+    name: Optional[str] = Field(default=None, description="Human-Readable name for this resource.")
     description: Optional[str] = description_field
     model_config = ConfigDict(extra="ignore", from_attributes=True)
 
@@ -123,7 +122,13 @@ class DefaultModel(BaseModel):
         if not version_added:
             return None
 
-        Version(version_added)
+        try:
+            Version(version_added)
+        except InvalidVersion:
+            raise FidesValidationError(
+                f"Field 'version_added' does not have a valid version: {version_added}"
+            )
+
         return version_added
 
     @field_validator("version_deprecated")
@@ -137,7 +142,13 @@ class DefaultModel(BaseModel):
         if not version_deprecated:
             return None
 
-        Version(version_deprecated)
+        try:
+            Version(version_deprecated)
+        except InvalidVersion:
+            raise FidesValidationError(
+                f"Field 'version_deprecated' does not have a valid version: {version_deprecated}"
+            )
+
         return version_deprecated
 
 
