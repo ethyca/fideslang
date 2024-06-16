@@ -4,10 +4,10 @@ Contains all of the additional validation for the resource models.
 import re
 from collections import Counter
 from typing import Dict, List, Optional, Pattern, Set, Tuple
-from typing_extensions import Annotated
 
 from packaging.version import Version
 from pydantic import BeforeValidator, ValidationInfo
+from typing_extensions import Annotated
 
 FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
 
@@ -87,7 +87,9 @@ def deprecated_version_later_than_added(
     version_added: Optional[str] = values.data.get("version_added")
 
     # Convert into Versions
-    transformed_version_added: Version = Version(version_added) if version_added else Version("0")
+    transformed_version_added: Version = (
+        Version(version_added) if version_added else Version("0")
+    )
     transformed_version_deprecated: Version = Version(version_deprecated)
 
     if transformed_version_deprecated < transformed_version_added:

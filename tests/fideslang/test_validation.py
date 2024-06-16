@@ -21,7 +21,12 @@ from fideslang.models import (
     PrivacyRule,
     System,
 )
-from fideslang.validation import FidesKey, FidesValidationError, valid_data_type, validate_fides_key
+from fideslang.validation import (
+    FidesKey,
+    FidesValidationError,
+    valid_data_type,
+    validate_fides_key,
+)
 
 DEFAULT_TAXONOMY_CLASSES = [DataCategory, DataUse, DataSubject]
 
@@ -457,6 +462,7 @@ def test_create_valid_system():
 def test_fides_key_validate_bad_key():
     with pytest.raises(FidesValidationError):
         validate_fides_key("hi!")
+
 
 @pytest.mark.unit
 def test_fides_key_validate_good_key():
