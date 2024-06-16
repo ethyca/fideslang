@@ -6,7 +6,7 @@ nox.options.reuse_existing_virtualenvs = True
 # These should match what is in the `pr_checks.yml` file for CI runs
 TESTED_PYTHON_VERSIONS = ["3.9", "3.10", "3.11"]
 TESTED_PYDANTIC_VERSIONS = ["2.2.1", "2.3.0", "2.4.2", "2.7.1"]
-TESTED_PYYAML_VERSIONS = ["5.5.1", "6.0.1"]
+TESTED_PYYAML_VERSIONS = ["5.4.1", "6.0.1"]
 
 
 def install_requirements(session: nox.Session) -> None:
