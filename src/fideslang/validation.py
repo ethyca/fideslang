@@ -3,7 +3,7 @@ Contains all of the additional validation for the resource models.
 """
 import re
 from collections import Counter
-from typing import Dict, Generator, List, Optional, Pattern, Set, Tuple
+from typing import Dict, List, Optional, Pattern, Set, Tuple
 from typing_extensions import Annotated
 
 from packaging.version import Version
