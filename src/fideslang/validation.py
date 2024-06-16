@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Pattern, Set, Tuple
 from typing_extensions import Annotated
 
 from packaging.version import Version
-from pydantic import StringConstraints, ValidationInfo, BeforeValidator
+from pydantic import BeforeValidator, ValidationInfo
 
 FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
 
