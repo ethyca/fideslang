@@ -261,7 +261,7 @@ def test_top_level_resource():
 
 @pytest.mark.unit
 def test_fides_key_doesnt_match_stated_parent_key():
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as exc:
         DataCategory(
             organization_fides_key="1",
             fides_key="user.custom_test_data",
@@ -269,6 +269,7 @@ def test_fides_key_doesnt_match_stated_parent_key():
             description="Custom Test Data Category",
             parent_key="user.account",
         )
+    assert 'The parent_key (user.account) does not match the parent parsed (user) from the fides_key (user.custom_test_data)!' in str(exc.value)
     assert DataCategory
 
 
@@ -333,7 +334,7 @@ def test_create_valid_data_category():
 
 @pytest.mark.unit
 def test_circular_dependency_data_category():
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as exc:
         DataCategory(
             organization_fides_key="1",
             fides_key="user",
@@ -341,7 +342,7 @@ def test_circular_dependency_data_category():
             description="Test Data Category",
             parent_key="user",
         )
-    assert True
+    assert "FidesKey can not self-reference!" in str(exc.value)
 
 
 @pytest.mark.unit

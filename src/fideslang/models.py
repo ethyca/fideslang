@@ -257,8 +257,8 @@ class DataCategory(FidesModel, DefaultModel):
 
     parent_key: Optional[FidesKey] = Field(default=None, validate_default=True)
 
-    _matching_parent_key: classmethod = matching_parent_key_validator
     _no_self_reference: classmethod = no_self_reference_validator
+    _matching_parent_key: classmethod = matching_parent_key_validator
 
 
 class Cookies(BaseModel):
@@ -318,8 +318,9 @@ class DataUse(FidesModel, DefaultModel):
     """The DataUse resource model."""
 
     parent_key: Optional[FidesKey] = Field(default=None, validate_default=True)
-    _matching_parent_key: classmethod = matching_parent_key_validator
+
     _no_self_reference: classmethod = no_self_reference_validator
+    _matching_parent_key: classmethod = matching_parent_key_validator
 
 
 # Dataset
