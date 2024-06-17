@@ -8,6 +8,10 @@ import yaml
 from fideslang import models
 
 
+def assert_error_message_includes(exception_info, error_excerpt):
+    assert error_excerpt in str(exception_info.value)
+
+
 @pytest.fixture(scope="session")
 def resources_dict():
     """

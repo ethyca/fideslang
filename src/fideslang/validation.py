@@ -67,7 +67,7 @@ def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:
     """
     fides_key = validate_fides_key(values.data.get("fides_key", ""))
     if value == fides_key:
-        raise FidesValidationError("FidesKey can not self-reference!")
+        raise FidesValidationError("FidesKey cannot self-reference!")
     return value
 
 
