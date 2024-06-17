@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from packaging.version import InvalidVersion, Version
 from pydantic import (
@@ -20,6 +20,7 @@ from pydantic import (
     PositiveInt,
     field_validator,
     model_validator,
+    ValidationInfo,
 )
 from typing_extensions import Annotated
 
@@ -454,21 +455,20 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         return meta_values
 
     @model_validator(mode="after")
-    @classmethod
-    def validate_object_fields(  # type: ignore
-        cls,
-        values: Dict[str, Any],
-    ) -> Optional[List["DatasetField"]]:
+    def validate_object_fields(
+        self,
+        _: ValidationInfo,
+    ) -> DatasetField:
         """Two validation checks for object fields:
         - If there are sub-fields specified, type should be either empty or 'object'
         - Additionally object fields cannot have data_categories.
         """
-        fields = values.fields
+        fields = self.fields
         declared_data_type = None
-        field_name: str = values.name  # type: ignore
+        field_name: str = self.name
 
-        if values.fides_meta:
-            declared_data_type = values.fides_meta.data_type
+        if self.fides_meta:
+            declared_data_type = self.fides_meta.data_type
 
         if fields and declared_data_type:
             data_type, _ = parse_data_type_string(declared_data_type)
@@ -477,12 +477,11 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
                     f"The data type '{data_type}' on field '{field_name}' is not compatible with specified sub-fields. Convert to an 'object' field."
                 )
 
-        if (fields or declared_data_type == "object") and values.data_categories:
+        if (fields or declared_data_type == "object") and self.data_categories:
             raise ValueError(
                 f"Object field '{field_name}' cannot have specified data_categories. Specify category on sub-field instead"
             )
-
-        return values
+        return self
 
 
 # this is required for the recursive reference in the pydantic model:
@@ -533,8 +532,8 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
 
     fides_meta: Optional[CollectionMeta] = None
 
-    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)
-    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)
+    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)  # type: ignore[assignment]
+    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)  # type: ignore[assignment]
 
 
 class ContactDetails(BaseModel):
@@ -592,10 +591,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         description="An array of objects that describe the Dataset's collections.",
     )
 
-    _sort_collections: classmethod = field_validator("collections")(
+    _sort_collections: classmethod = field_validator("collections")(  # type: ignore[assignment]
         sort_list_objects_by_name
     )
-    _unique_items_in_list: classmethod = field_validator("collections")(
+    _unique_items_in_list: classmethod = field_validator("collections")(  # type: ignore[assignment]
         unique_items_in_list
     )
 
@@ -774,7 +773,7 @@ class Policy(FidesModel):
         description=PolicyRule.__doc__,
     )
 
-    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)
+    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
 
 
 class PrivacyDeclaration(BaseModel):
@@ -1069,7 +1068,7 @@ class System(FidesModel):
         description="System-level cookies unassociated with a data use to deliver services and functionality",
     )
 
-    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(
+    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
     )
 
@@ -1078,7 +1077,7 @@ class System(FidesModel):
     def privacy_declarations_reference_data_flows(
         cls,
         values: Dict,
-    ) -> PrivacyDeclaration:
+    ) -> Dict:
         """
         Any `PrivacyDeclaration`s which include `egress` and/or `ingress` fields must
         only reference the `fides_key`s of defined `DataFlow`s in said field(s).
