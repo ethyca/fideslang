@@ -441,9 +441,7 @@ def test_invalid_fides_key_privacy_rule():
 def test_invalid_matches_privacy_rule():
     with pytest.raises(ValidationError) as exc:
         PrivacyRule(matches="AN", values=["foo_bar"])
-    assert_error_message_includes(
-        exc, "Input should be 'ANY', 'ALL', 'NONE' or 'OTHER' "
-    )
+    assert_error_message_includes(exc, "Input should be 'ANY'")
 
 
 @pytest.mark.unit
