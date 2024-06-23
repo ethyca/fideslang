@@ -6,7 +6,7 @@ from collections import Counter
 from typing import Dict, List, Optional, Pattern, Set, Tuple
 
 from packaging.version import Version
-from pydantic import BeforeValidator, ValidationInfo
+from pydantic import AfterValidator, ValidationInfo
 from typing_extensions import Annotated
 
 FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
@@ -27,7 +27,7 @@ def validate_fides_key(value: str) -> str:
     return value
 
 
-FidesKey = Annotated[str, BeforeValidator(validate_fides_key)]
+FidesKey = Annotated[str, AfterValidator(validate_fides_key)]
 
 
 def sort_list_objects_by_name(values: List) -> List:
