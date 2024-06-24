@@ -13,7 +13,7 @@ from packaging.version import InvalidVersion, Version
 from pydantic import (
     AnyUrl,
     BaseModel,
-    BeforeValidator,
+    AfterValidator,
     ConfigDict,
     Field,
     HttpUrl,
@@ -288,19 +288,18 @@ class DataSubjectRights(BaseModel):
         description="A list of valid data subject rights to be used when applying data rights to a data subject via a strategy.",
     )
 
-    @model_validator(mode="before")
-    @classmethod
-    def include_exclude_has_values(cls, values: Dict) -> Dict:
+    @model_validator(mode="after")
+    def include_exclude_has_values(self) -> "DataSubjectRights":
         """
         Validate the if include or exclude is chosen, that at least one
         value is present.
         """
-        strategy, rights = values.get("strategy"), values.get("values")
+        strategy, rights = self.strategy, self.values
         if strategy in ("INCLUDE", "EXCLUDE"):
             assert (
                 rights is not None
             ), f"If {strategy} is chosen, rights must also be listed."
-        return values
+        return self
 
 
 class DataSubject(FidesModel, DefaultModel):
@@ -503,7 +502,7 @@ def validate_fides_collection_key(value: str) -> str:
     )
 
 
-FidesCollectionKey = Annotated[str, BeforeValidator(validate_fides_collection_key)]
+FidesCollectionKey = Annotated[str, AfterValidator(validate_fides_collection_key)]
 
 
 class CollectionMeta(BaseModel):
@@ -907,20 +906,19 @@ class DataFlow(BaseModel):
         description="An array of data categories describing the data in transit.",
     )
 
-    @model_validator(mode="before")
-    @classmethod
-    def user_special_case(cls, values: Dict) -> Dict:
+    @model_validator(mode="after")
+    def user_special_case(self) -> "DataFlow":
         """
         If either the `fides_key` or the `type` are set to "user",
         then the other must also be set to "user".
         """
 
-        if values["fides_key"] == "user" or values["type"] == "user":
+        if self.fides_key == "user" or self.type == "user":
             assert (
-                values["fides_key"] == "user" and values["type"] == "user"
+                self.fides_key == "user" and self.type == "user"
             ), "The 'user' fides_key is required for, and requires, the type 'user'"
 
-        return values
+        return self
 
     @field_validator("type")
     @classmethod
@@ -1072,23 +1070,21 @@ class System(FidesModel):
         sort_list_objects_by_name
     )
 
-    @model_validator(mode="before")
-    @classmethod
+    @model_validator(mode="after")
     def privacy_declarations_reference_data_flows(
-        cls,
-        values: Dict,
-    ) -> Dict:
+        self,
+    ) -> "System":
         """
         Any `PrivacyDeclaration`s which include `egress` and/or `ingress` fields must
         only reference the `fides_key`s of defined `DataFlow`s in said field(s).
         """
-        privacy_declarations = values.get("privacy_declarations") or []
+        privacy_declarations = self.privacy_declarations or []
         for privacy_declaration in privacy_declarations:
             for direction in ["egress", "ingress"]:
                 fides_keys = getattr(privacy_declaration, direction, None)
                 if fides_keys is not None:
-                    data_flows = values.get(direction)
-                    system = values["fides_key"]
+                    data_flows = getattr(self, direction)
+                    system = self.fides_key
                     assert (
                         data_flows is not None and len(data_flows) > 0
                     ), f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with one or more resources and is applied to the System '{system}', which does not itself define any {direction}."
@@ -1098,7 +1094,7 @@ class System(FidesModel):
                             data_flow.fides_key for data_flow in data_flows
                         ], f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
-        return values
+        return self
 
     model_config = ConfigDict(use_enum_values=True)
 
