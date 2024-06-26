@@ -875,6 +875,8 @@ class SystemMetadata(BaseModel):
         description="The port of the external resource for the system being modeled.",
     )
 
+    model_config = ConfigDict(coerce_numbers_to_str=True)  # For backwards compat of endpoint_port
+
 
 class FlowableResources(str, Enum):
     """
