@@ -3,11 +3,10 @@ Contains all of the additional validation for the resource models.
 """
 import re
 from collections import Counter
-from typing import Dict, List, Optional, Pattern, Set, Tuple
+from typing import Annotated, Dict, List, Optional, Pattern, Set, Tuple
 
 from packaging.version import Version
-from pydantic import AfterValidator, ValidationInfo
-from typing_extensions import Annotated
+from pydantic import AfterValidator, AnyUrl, ValidationInfo
 
 FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
 
@@ -204,3 +203,10 @@ def valid_data_type(data_type_str: Optional[str]) -> Optional[str]:
         raise ValueError(f"The data type {data_type_str} is not supported.")
 
     return data_type_str
+
+
+def validate_path_of_url(value: AnyUrl) -> str:
+    return str(value)
+
+
+AnyUrlString = Annotated[AnyUrl, AfterValidator(validate_path_of_url)]

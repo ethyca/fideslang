@@ -7,24 +7,24 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Annotated, Dict, List, Optional, Union
 
 from packaging.version import InvalidVersion, Version
 from pydantic import (
+    AfterValidator,
     AnyUrl,
     BaseModel,
-    AfterValidator,
     ConfigDict,
     Field,
     HttpUrl,
     PositiveInt,
+    ValidationInfo,
     field_validator,
     model_validator,
-    ValidationInfo,
 )
-from typing_extensions import Annotated
 
 from fideslang.validation import (
+    AnyUrlString,
     FidesKey,
     FidesValidationError,
     deprecated_version_later_than_added,
@@ -77,7 +77,9 @@ class FidesModel(BaseModel):
         default=None, description="Human-Readable name for this resource."
     )
     description: Optional[str] = description_field
-    model_config = ConfigDict(extra="ignore", from_attributes=True)
+    model_config = ConfigDict(
+        extra="ignore", from_attributes=True, coerce_numbers_to_str=True
+    )
 
 
 class DefaultModel(BaseModel):
@@ -875,7 +877,9 @@ class SystemMetadata(BaseModel):
         description="The port of the external resource for the system being modeled.",
     )
 
-    model_config = ConfigDict(coerce_numbers_to_str=True)  # For backwards compat of endpoint_port
+    model_config = ConfigDict(
+        coerce_numbers_to_str=True
+    )  # For backwards compat of endpoint_port
 
 
 class FlowableResources(str, Enum):
@@ -1018,7 +1022,7 @@ class System(FidesModel):
         default=None,
         description="The optional status of a Data Protection Impact Assessment",
     )
-    privacy_policy: Optional[AnyUrl] = Field(
+    privacy_policy: Optional[AnyUrlString] = Field(
         default=None,
         description="A URL that points to the system's publicly accessible privacy policy.",
     )
@@ -1059,7 +1063,7 @@ class System(FidesModel):
         default=False,
         description="Whether the system uses non-cookie methods of storage or accessing information stored on a user's device.",
     )
-    legitimate_interest_disclosure_url: Optional[AnyUrl] = Field(
+    legitimate_interest_disclosure_url: Optional[AnyUrlString] = Field(
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
