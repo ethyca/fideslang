@@ -18,6 +18,7 @@ from pydantic import (
     Field,
     HttpUrl,
     PositiveInt,
+    SerializeAsAny,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -1022,7 +1023,7 @@ class System(FidesModel):
         default=None,
         description="The optional status of a Data Protection Impact Assessment",
     )
-    privacy_policy: Optional[AnyUrlString] = Field(
+    privacy_policy: SerializeAsAny[Optional[AnyUrlString]] = Field(
         default=None,
         description="A URL that points to the system's publicly accessible privacy policy.",
     )
@@ -1063,7 +1064,7 @@ class System(FidesModel):
         default=False,
         description="Whether the system uses non-cookie methods of storage or accessing information stored on a user's device.",
     )
-    legitimate_interest_disclosure_url: Optional[AnyUrlString] = Field(
+    legitimate_interest_disclosure_url: SerializeAsAny[Optional[AnyUrlString]] = Field(
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )

@@ -385,7 +385,7 @@ class TestSystem:
         )
 
     def test_expanded_system(self):
-        assert System(
+        system = System(
             fides_key="test_system",
             organization_fides_key="1",
             tags=["some", "tags"],
@@ -480,6 +480,7 @@ class TestSystem:
                 }
             ],
         )
+        print(f"dumped={system.model_dump()}")
 
     def test_flexible_legal_basis_default(self):
         pd = PrivacyDeclaration(
