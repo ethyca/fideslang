@@ -12,7 +12,6 @@ from typing import Annotated, Dict, List, Optional, Union
 from packaging.version import InvalidVersion, Version
 from pydantic import (
     AfterValidator,
-    AnyUrl,
     BaseModel,
     ConfigDict,
     Field,

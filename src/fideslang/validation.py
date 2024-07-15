@@ -6,7 +6,7 @@ from collections import Counter
 from typing import Annotated, Dict, List, Optional, Pattern, Set, Tuple
 
 from packaging.version import Version
-from pydantic import AfterValidator, AnyUrl, ValidationInfo
+from pydantic import AfterValidator, AnyHttpUrl, AnyUrl, ValidationInfo
 
 FIDES_KEY_PATTERN = r"^[a-zA-Z0-9_.<>-]+$"
 
@@ -206,7 +206,16 @@ def valid_data_type(data_type_str: Optional[str]) -> Optional[str]:
 
 
 def validate_path_of_url(value: AnyUrl) -> str:
-    return str(value)
+    """Converts an AnyUrl to a string and removes trailing slash"""
+    return str(value).rstrip("/")
 
 
 AnyUrlString = Annotated[AnyUrl, AfterValidator(validate_path_of_url)]
+
+
+def validate_path_of_http_url(value: AnyHttpUrl) -> str:
+    """Converts an AnyHttpUrl to a string and removes trailing slash"""
+    return str(value).rstrip("/")
+
+
+AnyHttpUrlString = Annotated[AnyHttpUrl, AfterValidator(validate_path_of_http_url)]

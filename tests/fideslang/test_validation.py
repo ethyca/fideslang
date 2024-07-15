@@ -22,10 +22,12 @@ from fideslang.models import (
     System,
 )
 from fideslang.validation import (
+    AnyHttpUrlString,
     AnyUrlString,
     FidesValidationError,
     valid_data_type,
     validate_fides_key,
+    validate_path_of_http_url,
     validate_path_of_url,
 )
 from tests.conftest import assert_error_message_includes
@@ -783,7 +785,7 @@ class TestAnyUrlString:
     def test_validate_path_of_url(self):
         assert (
             validate_path_of_url("https://www.example.com/")
-            == "https://www.example.com/"
+            == "https://www.example.com"
         )
 
     def test_system_urls(self):
@@ -798,6 +800,21 @@ class TestAnyUrlString:
         )
 
         # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString
+        assert system.privacy_policy == "https://www.example.com"
+
+
+class TestAnyHttpUrlString:
+    def test_valid_url(self):
+        assert AnyHttpUrlString("https://www.example.com")
+
+    def test_invalid_url(self):
+        with pytest.raises(ValidationError) as exc:
+            AnyHttpUrlString("invalid_url")
+
+        assert_error_message_includes(exc, "Input should be a valid URL")
+
+    def test_validate_path_of_url(self):
         assert (
-            system.privacy_policy == "https://www.example.com/"
-        )  # Trailing slash is added by AnyUrl
+            validate_path_of_http_url("https://www.example.com/")
+            == "https://www.example.com"
+        )

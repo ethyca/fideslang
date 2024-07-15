@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
 class Purpose(BaseModel):
