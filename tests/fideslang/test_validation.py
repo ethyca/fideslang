@@ -792,7 +792,9 @@ class TestAnyUrlString:
             == "ftp://user:password@host/"
         ), "Format corrected"
         assert (
-            TypeAdapter(AnyUrlString).validate_python("ftp://user:password@host:3341/path")
+            TypeAdapter(AnyUrlString).validate_python(
+                "ftp://user:password@host:3341/path"
+            )
             == "ftp://user:password@host:3341/path"
         ), "No change"
         assert (
@@ -815,8 +817,23 @@ class TestAnyUrlString:
             privacy_policy="https://www.example.com",
         )
 
-        # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString
+        # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString.
+        # It also adds a trailing slash to example.com
         assert system.privacy_policy == "https://www.example.com/"
+
+        system = System(
+            description="Test Policy",
+            fides_key="test_system",
+            name="Test System",
+            organization_fides_key="1",
+            privacy_declarations=[],
+            system_type="SYSTEM",
+            privacy_policy="https://justtag.com/PRIVACY_POLICY.pdf",
+        )
+
+        # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString.
+        # No trailing slash is added
+        assert system.privacy_policy == "https://justtag.com/PRIVACY_POLICY.pdf"
 
 
 class TestAnyHttpUrlString:
@@ -839,11 +856,15 @@ class TestAnyHttpUrlString:
             == "https://www.example.com/"
         ), "No change"
         assert (
-            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com/hello")
+            TypeAdapter(AnyHttpUrlString).validate_python(
+                "https://www.example.com/hello"
+            )
             == "https://www.example.com/hello"
         ), "No change"
         assert (
-            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com/hello/")
+            TypeAdapter(AnyHttpUrlString).validate_python(
+                "https://www.example.com/hello/"
+            )
             == "https://www.example.com/hello/"
         ), "No change"
 
