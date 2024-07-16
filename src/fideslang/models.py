@@ -1084,8 +1084,10 @@ class System(FidesModel):
         Any `PrivacyDeclaration`s which include `egress` and/or `ingress` fields must
         only reference the `fides_key`s of defined `DataFlow`s in said field(s).
         """
-        privacy_declarations = self.privacy_declarations or []
-        for privacy_declaration in privacy_declarations:
+        privacy_declarations: List[PrivacyDeclaration] = self.privacy_declarations or []
+        for (
+            privacy_declaration
+        ) in privacy_declarations:  # pylint:disable=not-an-iterable
             for direction in ["egress", "ingress"]:
                 fides_keys = getattr(privacy_declaration, direction, None)
                 if fides_keys is not None:
@@ -1097,7 +1099,8 @@ class System(FidesModel):
 
                     for fides_key in fides_keys:
                         assert fides_key in [
-                            data_flow.fides_key for data_flow in data_flows
+                            data_flow.fides_key
+                            for data_flow in data_flows  # pylint:disable=not-an-iterable
                         ], f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
         return self

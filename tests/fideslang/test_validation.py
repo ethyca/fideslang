@@ -27,8 +27,6 @@ from fideslang.validation import (
     FidesValidationError,
     valid_data_type,
     validate_fides_key,
-    validate_path_of_http_url,
-    validate_path_of_url,
 )
 from tests.conftest import assert_error_message_includes
 
@@ -828,12 +826,20 @@ class TestAnyUrlString:
             organization_fides_key="1",
             privacy_declarations=[],
             system_type="SYSTEM",
-            privacy_policy="https://justtag.com/PRIVACY_POLICY.pdf",
+            privacy_policy="https://policy.samsungrs.com/consent/eu/nsc/privacy_policy_de.html",
+            legitimate_interest_disclosure_url="https://policy.samsungrs.com/consent/eu/nsc/privacy_policy_de.html#gdpr-article",
         )
 
         # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString.
         # No trailing slash is added
-        assert system.privacy_policy == "https://justtag.com/PRIVACY_POLICY.pdf"
+        assert (
+            system.privacy_policy
+            == "https://policy.samsungrs.com/consent/eu/nsc/privacy_policy_de.html"
+        )
+        assert (
+            system.legitimate_interest_disclosure_url
+            == "https://policy.samsungrs.com/consent/eu/nsc/privacy_policy_de.html#gdpr-article"
+        )
 
 
 class TestAnyHttpUrlString:
