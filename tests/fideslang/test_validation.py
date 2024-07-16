@@ -1,5 +1,5 @@
 import pytest
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from fideslang.models import (
     CollectionMeta,
@@ -774,7 +774,7 @@ class TestCollectionMeta:
 
 class TestAnyUrlString:
     def test_valid_url(self):
-        assert AnyUrlString("https://www.example.com")
+        assert AnyUrlString("https://www.example.com/")
 
     def test_invalid_url(self):
         with pytest.raises(ValidationError) as exc:
@@ -782,11 +782,27 @@ class TestAnyUrlString:
 
         assert_error_message_includes(exc, "Input should be a valid URL")
 
-    def test_validate_path_of_url(self):
+    def test_validate_url(self):
         assert (
-            validate_path_of_url("https://www.example.com/")
-            == "https://www.example.com"
-        )
+            TypeAdapter(AnyUrlString).validate_python("ftp://user:password@host")
+            == "ftp://user:password@host/"
+        ), "Trailing slash added"
+        assert (
+            TypeAdapter(AnyUrlString).validate_python("ftp:user:password@host/")
+            == "ftp://user:password@host/"
+        ), "Format corrected"
+        assert (
+            TypeAdapter(AnyUrlString).validate_python("ftp://user:password@host:3341/path")
+            == "ftp://user:password@host:3341/path"
+        ), "No change"
+        assert (
+            TypeAdapter(AnyUrlString).validate_python("https://www.example.com/hello")
+            == "https://www.example.com/hello"
+        ), "No change"
+        assert (
+            TypeAdapter(AnyUrlString).validate_python("https://www.example.com/hello/")
+            == "https://www.example.com/hello/"
+        ), "No change"
 
     def test_system_urls(self):
         system = System(
@@ -800,7 +816,7 @@ class TestAnyUrlString:
         )
 
         # This is a string and not a Url type, because privacy_policy is using custom type AnyUrlString
-        assert system.privacy_policy == "https://www.example.com"
+        assert system.privacy_policy == "https://www.example.com/"
 
 
 class TestAnyHttpUrlString:
@@ -815,6 +831,23 @@ class TestAnyHttpUrlString:
 
     def test_validate_path_of_url(self):
         assert (
-            validate_path_of_http_url("https://www.example.com/")
-            == "https://www.example.com"
-        )
+            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com")
+            == "https://www.example.com/"
+        ), "Trailing slash added"
+        assert (
+            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com/")
+            == "https://www.example.com/"
+        ), "No change"
+        assert (
+            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com/hello")
+            == "https://www.example.com/hello"
+        ), "No change"
+        assert (
+            TypeAdapter(AnyHttpUrlString).validate_python("https://www.example.com/hello/")
+            == "https://www.example.com/hello/"
+        ), "No change"
+
+        with pytest.raises(ValidationError) as exc:
+            TypeAdapter(AnyHttpUrlString).validate_python("ftp://user:password@host")
+
+        assert_error_message_includes(exc, "URL scheme should be 'http' or 'https'")

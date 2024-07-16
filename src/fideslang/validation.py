@@ -206,16 +206,16 @@ def valid_data_type(data_type_str: Optional[str]) -> Optional[str]:
 
 
 def validate_path_of_url(value: AnyUrl) -> str:
-    """Converts an AnyUrl to a string and removes trailing slash"""
-    return str(value).rstrip("/")
+    """Converts an AnyUrl to a string"""
+    return str(value)
 
 
 AnyUrlString = Annotated[AnyUrl, AfterValidator(validate_path_of_url)]
 
 
 def validate_path_of_http_url(value: AnyHttpUrl) -> str:
-    """Converts an AnyHttpUrl to a string and removes trailing slash"""
-    return str(value).rstrip("/")
+    """Converts an AnyHttpUrl to a string"""
+    return str(value)
 
 
 AnyHttpUrlString = Annotated[AnyHttpUrl, AfterValidator(validate_path_of_http_url)]
