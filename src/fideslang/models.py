@@ -62,6 +62,10 @@ meta_field = Field(
 )
 
 
+class MaskingStrategy(BaseModel):
+    strategy: str
+
+
 class FidesModel(BaseModel):
     """The base model for most top-level Fides objects."""
 
@@ -406,6 +410,7 @@ class FidesMeta(BaseModel):
         default=None,
         description="Optionally specify that a field may be used as a custom request field in DSRs. The value is the name of the field in the DSR.",
     )
+    masking_strategy_override: Optional[MaskingStrategy] = None
 
     @field_validator("data_type")
     @classmethod
@@ -516,6 +521,7 @@ class CollectionMeta(BaseModel):
 
     after: Optional[List[FidesCollectionKey]] = None
     skip_processing: Optional[bool] = False
+    masking_strategy_override: Optional[MaskingStrategy] = None
 
 
 class DatasetCollection(FidesopsMetaBackwardsCompat):
@@ -579,6 +585,7 @@ class DatasetMetadata(BaseModel):
 
     resource_id: Optional[str] = None
     after: Optional[List[FidesKey]] = None
+    masking_strategy_override: Optional[MaskingStrategy] = None
 
 
 class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
