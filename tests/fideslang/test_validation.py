@@ -795,7 +795,7 @@ class TestCollectionMeta:
         meta = CollectionMeta(masking_strategy_override={"strategy": "delete"})
 
         assert meta.masking_strategy_override == MaskingStrategyOverride(
-            strategy=MaskingStrategies.delete
+            strategy=MaskingStrategies.DELETE
         )
 
 

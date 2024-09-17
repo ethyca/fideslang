@@ -63,10 +63,14 @@ meta_field = Field(
 
 
 class MaskingStrategies(str, Enum):
-    delete = "delete"
+    """Possible options for masking strategy overrides"""
+
+    DELETE = "delete"
 
 
 class MaskingStrategyOverride(BaseModel):
+    """Overrides policy-level masking strategies."""
+
     strategy: MaskingStrategies
 
 
