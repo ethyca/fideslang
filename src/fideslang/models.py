@@ -527,6 +527,7 @@ class CollectionMeta(BaseModel):
     """Collection-level specific annotations used for query traversal"""
 
     after: Optional[List[FidesCollectionKey]] = None
+    erase_after: Optional[List[FidesCollectionKey]] = None
     skip_processing: Optional[bool] = False
     masking_strategy_override: Optional[MaskingStrategyOverride] = None
 
