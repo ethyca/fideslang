@@ -5,7 +5,6 @@ from pytest import mark, raises
 from fideslang import DataFlow, Dataset, Organization, PrivacyDeclaration, System
 from fideslang.models import (
     ContactDetails,
-    Cookies,
     DataResponsibilityTitle,
     DatasetCollection,
     DatasetField,
@@ -175,7 +174,7 @@ class TestSystem:
                 data_shared_with_third_parties=False,
                 third_parties=None,
                 shared_categories=[],
-                cookies=[Cookies(name="test_cookie", path="/", domain="example.com")],
+                cookies=None,
             )
         ]
 
