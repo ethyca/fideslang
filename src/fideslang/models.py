@@ -284,26 +284,6 @@ class DataCategory(FidesModel, DefaultModel):
     _matching_parent_key: classmethod = matching_parent_key_validator
 
 
-class Cookies(BaseModel):
-    """
-    DEPRECATED.
-    The Cookies resource model
-    """
-
-    name: str
-    path: Optional[str] = None
-    domain: Optional[str] = None
-    model_config = ConfigDict(from_attributes=True)
-
-    @model_validator(mode="after")
-    def validate_cookies(self, _: ValidationInfo) -> Cookies:
-        """
-        Validate that the `cookies` field is deprecated and warn that it should not be used.
-        """
-        warn("The 'cookies' field is deprecated and should not be used.")
-        return self
-
-
 class DataSubjectRights(BaseModel):
     """
     The DataSubjectRights resource model.
@@ -891,23 +871,22 @@ class PrivacyDeclaration(BaseModel):
         default_factory=list,
         description="The categories of personal data that this system shares with third parties.",
     )
-    cookies: Optional[List[Cookies]] = Field(
-        default=None,
-        description="DEPRECATED. Cookies associated with this data use to deliver services and functionality",
+    cookies: Optional[Any] = Field(
+        default_factory=None,
+        description="Deprecated, do not use.",
+        deprecated=True,
     )
     model_config = ConfigDict(from_attributes=True)
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(
-        cls, value: Optional[List[Cookies]]
-    ) -> Optional[List[Cookies]]:
+    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         if value is not None:
             warn("The 'cookies' field is deprecated and should not be used.")
-        return value
+        return None
 
 
 class SystemMetadata(BaseModel):
@@ -1120,10 +1099,16 @@ class System(FidesModel):
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
-    cookies: Optional[List[Cookies]] = Field(
-        default=None,
-        description="System-level cookies unassociated with a data use to deliver services and functionality",
+    cookies: Optional[Any] = Field(
+        default_factory=None,
+        description="Deprecated, do not use.",
+        deprecated=True,
     )
+
+    @field_validator("cookies", pre=True, always=True)
+    @classmethod
+    def set_cookies_to_none(cls, Optional[Any]) -> Optional[Any]:
+        return None
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
@@ -1157,18 +1142,6 @@ class System(FidesModel):
                         ], f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
 
         return self
-
-    @field_validator("cookies")
-    @classmethod
-    def validate_cookies(
-        cls, value: Optional[List[Cookies]]
-    ) -> Optional[List[Cookies]]:
-        """
-        Validate that the `cookies` field is deprecated and warn that it should not be used.
-        """
-        if value is not None:
-            warn("The 'cookies' field is deprecated and should not be used.")
-        return value
 
     model_config = ConfigDict(use_enum_values=True)
 
