@@ -798,7 +798,7 @@ class Policy(FidesModel):
     _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
 
 
-class PrivacyDeclaration(BaseModel):
+class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
     """
     The PrivacyDeclaration resource model.
 
@@ -871,7 +871,7 @@ class PrivacyDeclaration(BaseModel):
         default_factory=list,
         description="The categories of personal data that this system shares with third parties.",
     )
-    cookies: Optional[Any] = Field(
+    cookies: Optional[Any] = Field(  # type: ignore
         default=None,
         description="Deprecated, do not use.",
         deprecated=True,
@@ -880,7 +880,7 @@ class PrivacyDeclaration(BaseModel):
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:
+    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:  # type: ignore
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -971,7 +971,7 @@ class DataFlow(BaseModel):
         return value
 
 
-class System(FidesModel):
+class System(FidesModel):  # type: ignore[misc]
     """
     The System resource model.
 
@@ -1099,7 +1099,7 @@ class System(FidesModel):
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
-    cookies: Optional[Any] = Field(  # mypy: ignore[valid-type]
+    cookies: Optional[Any] = Field(  # type: ignore
         default=None,
         description="Deprecated, do not use.",
         deprecated=True,
@@ -1107,9 +1107,7 @@ class System(FidesModel):
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(
-        cls, value: Optional[Any]  # type: ignore[misc]
-    ) -> Optional[Any]:
+    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:  # type: ignore
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
