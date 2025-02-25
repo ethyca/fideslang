@@ -872,7 +872,7 @@ class PrivacyDeclaration(BaseModel):
         description="The categories of personal data that this system shares with third parties.",
     )
     cookies: Optional[Any] = Field(
-        default_factory=None,
+        default=None,
         description="Deprecated, do not use.",
         deprecated=True,
     )
@@ -1099,15 +1099,17 @@ class System(FidesModel):
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
-    cookies: Optional[Any] = Field(
-        default_factory=None,
+    cookies: Optional[Any] = Field(  # mypy: ignore[valid-type]
+        default=None,
         description="Deprecated, do not use.",
         deprecated=True,
     )
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:
+    def validate_cookies(
+        cls, value: Optional[Any]  # type: ignore[misc]
+    ) -> Optional[Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
