@@ -880,13 +880,12 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:  # type: ignore
+    def validate_cookies(cls, value: Optional[Any]) -> None:  # type: ignore
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         if value is not None:
             warn("The 'cookies' field is deprecated and should not be used.")
-        return None
 
 
 class SystemMetadata(BaseModel):
@@ -1107,13 +1106,12 @@ class System(FidesModel):  # type: ignore[misc]
 
     @field_validator("cookies")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> Optional[Any]:  # type: ignore
+    def validate_cookies(cls, value: Optional[Any]) -> None:  # type: ignore
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         if value is not None:
             warn("The 'cookies' field is deprecated and should not be used.")
-        return None
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
