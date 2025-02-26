@@ -152,7 +152,9 @@ class TestSystem:
         ]
         assert system.meta == {"some": "meta stuff"}
         assert system.organization_fides_key == "1"
-        assert system.cookies == None
+        assert (
+            system.cookies == None
+        ), "Cookies are deprecated and should be ignored on the model"
         assert system.system_type == "SYSTEM"
         assert system.tags == ["some", "tags"]
         assert system.privacy_declarations == [
@@ -174,7 +176,7 @@ class TestSystem:
                 data_shared_with_third_parties=False,
                 third_parties=None,
                 shared_categories=[],
-                cookies=None,
+                cookies=None,  # Cookies are deprecated and should be ignored on the model
             )
         ]
 

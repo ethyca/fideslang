@@ -885,7 +885,9 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         if value is not None:
-            warn("The 'cookies' field is deprecated and should not be used.")
+            warn(
+                "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
+            )
 
 
 class SystemMetadata(BaseModel):
@@ -1111,7 +1113,9 @@ class System(FidesModel):  # type: ignore[misc]
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         if value is not None:
-            warn("The 'cookies' field is deprecated and should not be used.")
+            warn(
+                "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
+            )
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
