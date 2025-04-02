@@ -1100,11 +1100,6 @@ class System(FidesModel):  # type: ignore[misc]
         default=None,
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
-    cookies: Optional[Any] = Field(  # type: ignore
-        default=None,
-        description="Deprecated, do not use.",
-        deprecated=True,
-    )
 
     @field_validator("cookies")
     @classmethod
