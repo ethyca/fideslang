@@ -878,16 +878,17 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
     )
     model_config = ConfigDict(from_attributes=True)
 
-    @field_validator("cookies")
+    @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> None:  # type: ignore
+    def validate_cookies(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if value is not None:
+        if "cookies" in values and values["cookies"] is not None:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
+        return values
 
 
 class SystemMetadata(BaseModel):
@@ -1101,16 +1102,17 @@ class System(FidesModel):  # type: ignore[misc]
         description="A URL that points to the system's publicly accessible legitimate interest disclosure.",
     )
 
-    @field_validator("cookies")
+    @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, value: Optional[Any]) -> None:  # type: ignore
+    def validate_cookies(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if value is not None:
+        if "cookies" in values and values["cookies"] is not None:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
+        return values
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
