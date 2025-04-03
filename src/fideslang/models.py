@@ -871,11 +871,6 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
         default_factory=list,
         description="The categories of personal data that this system shares with third parties.",
     )
-    cookies: Optional[Any] = Field(  # type: ignore
-        default=None,
-        description="Deprecated, do not use.",
-        deprecated=True,
-    )
     model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="before")
