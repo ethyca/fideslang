@@ -875,15 +875,21 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if "cookies" in values and values["cookies"] is not None:
+        if type(values) == dict:
+            keys = values.keys()
+        else:
+            keys = vars(values).keys()
+        if "cookies" in keys:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
-        return values
+            return values
+        else:
+            return values
 
 
 class SystemMetadata(BaseModel):
@@ -1099,15 +1105,21 @@ class System(FidesModel):  # type: ignore[misc]
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if "cookies" in values and values["cookies"] is not None:
+        if type(values) == dict:
+            keys = values.keys()
+        else:
+            keys = vars(values).keys()
+        if "cookies" in keys:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
-        return values
+            return values
+        else:
+            return values
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
