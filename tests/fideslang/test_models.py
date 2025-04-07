@@ -115,7 +115,6 @@ class TestSystem:
             meta={"some": "meta stuff"},
             name="Test System",
             organization_fides_key="1",
-            cookies=[{"name": "test_cookie"}],
             privacy_declarations=[
                 PrivacyDeclaration(
                     data_categories=[],
@@ -124,9 +123,6 @@ class TestSystem:
                     egress=["test_system_2"],
                     ingress=["test_system_3"],
                     name="declaration-name",
-                    cookies=[
-                        {"name": "test_cookie", "path": "/", "domain": "example.com"}
-                    ],
                 )
             ],
             system_type="SYSTEM",
@@ -152,9 +148,6 @@ class TestSystem:
         ]
         assert system.meta == {"some": "meta stuff"}
         assert system.organization_fides_key == "1"
-        assert (
-            system.cookies == None
-        ), "Cookies are deprecated and should be ignored on the model"
         assert system.system_type == "SYSTEM"
         assert system.tags == ["some", "tags"]
         assert system.privacy_declarations == [
@@ -176,9 +169,9 @@ class TestSystem:
                 data_shared_with_third_parties=False,
                 third_parties=None,
                 shared_categories=[],
-                cookies=None,  # Cookies are deprecated and should be ignored on the model
             )
         ]
+        assert "cookies" not in system.model_dump()
 
     def test_system_valid_nested_meta(self) -> None:
         system = System(
@@ -444,9 +437,6 @@ class TestSystem:
                     third_parties="advertising; marketing",
                     shared_categories=[],
                     flexible_legal_basis_for_processing=True,
-                    cookies=[
-                        {"name": "ANON_ID", "path": "/", "domain": "tribalfusion.com"}
-                    ],
                 )
             ],
             vendor_id="gvl.1",
@@ -474,13 +464,6 @@ class TestSystem:
             uses_non_cookie_access=True,
             legitimate_interest_disclosure_url="http://www.example.com/legitimate_interest_disclosure",
             previous_vendor_id="gacp.10",
-            cookies=[
-                {
-                    "name": "COOKIE_ID_EXAMPLE",
-                    "path": "/",
-                    "domain": "example.com/cookie",
-                }
-            ],
         )
         print(f"dumped={system.model_dump()}")
 
