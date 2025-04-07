@@ -879,7 +879,7 @@ class PrivacyDeclaration(BaseModel):
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if type(values) == dict:
+        if isinstance(values, dict):
             keys = values.keys()
         else:
             keys = vars(values).keys()
@@ -1108,7 +1108,7 @@ class System(FidesModel):
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if type(values) == dict:
+        if isinstance(values, dict):
             keys = values.keys()
         else:
             keys = vars(values).keys()
