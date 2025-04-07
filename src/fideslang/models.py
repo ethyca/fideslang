@@ -798,7 +798,7 @@ class Policy(FidesModel):
     _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
 
 
-class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
+class PrivacyDeclaration(BaseModel):
     """
     The PrivacyDeclaration resource model.
 
@@ -875,7 +875,7 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -887,9 +887,8 @@ class PrivacyDeclaration(BaseModel):  # type: ignore[misc]
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
-            return values
-        else:
-            return values
+
+        return values
 
 
 class SystemMetadata(BaseModel):
@@ -974,7 +973,7 @@ class DataFlow(BaseModel):
         return value
 
 
-class System(FidesModel):  # type: ignore[misc]
+class System(FidesModel):
     """
     The System resource model.
 
@@ -1105,7 +1104,7 @@ class System(FidesModel):  # type: ignore[misc]
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -1117,9 +1116,8 @@ class System(FidesModel):  # type: ignore[misc]
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
             )
-            return values
-        else:
-            return values
+
+        return values
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
         sort_list_objects_by_name
