@@ -884,7 +884,7 @@ class PrivacyDeclaration(BaseModel):
         else:
             try:
                 keys = vars(values).keys()
-            except Exception:  # type: ignore[misc]
+            except (Exception,):  # type: ignore[misc]
                 keys = {}  # type: ignore[assignment]
         if "cookies" in keys:
             warn(
@@ -1116,7 +1116,7 @@ class System(FidesModel):
         else:
             try:
                 keys = vars(values).keys()
-            except Exception:  # type: ignore[misc]
+            except (Exception,):
                 keys = {}  # type: ignore[assignment]
         if "cookies" in keys:
             warn(
