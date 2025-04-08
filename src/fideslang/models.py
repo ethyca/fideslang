@@ -885,7 +885,7 @@ class PrivacyDeclaration(BaseModel):
             try:
                 keys = vars(values).keys()
             except Exception:
-                keys = []
+                keys = {}
         if "cookies" in keys:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
@@ -1117,7 +1117,7 @@ class System(FidesModel):
             try:
                 keys = vars(values).keys()
             except Exception:
-                keys = []
+                keys = {}
         if "cookies" in keys:
             warn(
                 "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
