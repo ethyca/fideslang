@@ -169,6 +169,7 @@ class TestSystem:
                 data_shared_with_third_parties=False,
                 third_parties=None,
                 shared_categories=[],
+                cookies=[{"name": "test_cookie"}],
             )
         ]
         assert "cookies" not in system.model_dump()
@@ -460,12 +461,14 @@ class TestSystem:
             data_security_practices=None,
             cookie_max_age_seconds="31536000",
             uses_cookies=True,
+            cookies=[{"name": "test_cookie"}],
             cookie_refresh=True,
             uses_non_cookie_access=True,
             legitimate_interest_disclosure_url="http://www.example.com/legitimate_interest_disclosure",
             previous_vendor_id="gacp.10",
         )
         print(f"dumped={system.model_dump()}")
+        assert "cookies" not in system.model_dump()
 
     def test_flexible_legal_basis_default(self):
         pd = PrivacyDeclaration(
