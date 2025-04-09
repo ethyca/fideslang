@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pytest import mark, raises
+from pytest import mark, raises, warns
 
 from fideslang import DataFlow, Dataset, Organization, PrivacyDeclaration, System
 from fideslang.models import (
@@ -469,6 +469,30 @@ class TestSystem:
         )
         print(f"dumped={system.model_dump()}")
         assert "cookies" not in system.model_dump()
+
+    def test_system_cookies_warning(self) -> None:
+
+        with warns(
+            UserWarning,
+            match="The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored.",
+        ):
+            System(
+                description="Test Policy",
+                fides_key="test_system",
+                name="Test System",
+                organization_fides_key="1",
+                privacy_declarations=[
+                    PrivacyDeclaration(
+                        data_categories=[],
+                        data_subjects=[],
+                        data_use="provide",
+                        name="declaration-name",
+                        cookies=[{"name": "test_cookie"}],
+                    )
+                ],
+                system_type="SYSTEM",
+                cookies=[{"name": "test_cookie"}],
+            )
 
     def test_flexible_legal_basis_default(self):
         pd = PrivacyDeclaration(
