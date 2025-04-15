@@ -798,7 +798,7 @@ class Policy(FidesModel):
     _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
 
 
-def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:
+def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:  # type: ignore[misc]
     """
     Shared function to validate that the `cookies` field is deprecated and warn that it should not be used.
     """
