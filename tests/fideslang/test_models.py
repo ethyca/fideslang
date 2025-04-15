@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from pytest import mark, raises
+from pytest import mark, raises, warns
 
 from fideslang import DataFlow, Dataset, Organization, PrivacyDeclaration, System
 from fideslang.models import (
     ContactDetails,
-    Cookies,
     DataResponsibilityTitle,
     DatasetCollection,
     DatasetField,
@@ -116,7 +115,6 @@ class TestSystem:
             meta={"some": "meta stuff"},
             name="Test System",
             organization_fides_key="1",
-            cookies=[{"name": "test_cookie"}],
             privacy_declarations=[
                 PrivacyDeclaration(
                     data_categories=[],
@@ -125,14 +123,12 @@ class TestSystem:
                     egress=["test_system_2"],
                     ingress=["test_system_3"],
                     name="declaration-name",
-                    cookies=[
-                        {"name": "test_cookie", "path": "/", "domain": "example.com"}
-                    ],
                 )
             ],
             system_type="SYSTEM",
             tags=["some", "tags"],
         )
+
         assert system.name == "Test System"
         assert system.fides_key == "test_system"
         assert system.description == "Test Policy"
@@ -152,7 +148,6 @@ class TestSystem:
         ]
         assert system.meta == {"some": "meta stuff"}
         assert system.organization_fides_key == "1"
-        assert system.cookies == [Cookies(name="test_cookie", path=None, domain=None)]
         assert system.system_type == "SYSTEM"
         assert system.tags == ["some", "tags"]
         assert system.privacy_declarations == [
@@ -174,9 +169,10 @@ class TestSystem:
                 data_shared_with_third_parties=False,
                 third_parties=None,
                 shared_categories=[],
-                cookies=[Cookies(name="test_cookie", path="/", domain="example.com")],
+                cookies=[{"name": "test_cookie"}],
             )
         ]
+        assert "cookies" not in system.model_dump()
 
     def test_system_valid_nested_meta(self) -> None:
         system = System(
@@ -442,9 +438,6 @@ class TestSystem:
                     third_parties="advertising; marketing",
                     shared_categories=[],
                     flexible_legal_basis_for_processing=True,
-                    cookies=[
-                        {"name": "ANON_ID", "path": "/", "domain": "tribalfusion.com"}
-                    ],
                 )
             ],
             vendor_id="gvl.1",
@@ -468,19 +461,38 @@ class TestSystem:
             data_security_practices=None,
             cookie_max_age_seconds="31536000",
             uses_cookies=True,
+            cookies=[{"name": "test_cookie"}],
             cookie_refresh=True,
             uses_non_cookie_access=True,
             legitimate_interest_disclosure_url="http://www.example.com/legitimate_interest_disclosure",
             previous_vendor_id="gacp.10",
-            cookies=[
-                {
-                    "name": "COOKIE_ID_EXAMPLE",
-                    "path": "/",
-                    "domain": "example.com/cookie",
-                }
-            ],
         )
         print(f"dumped={system.model_dump()}")
+        assert "cookies" not in system.model_dump()
+
+    def test_system_cookies_warning(self) -> None:
+
+        with warns(
+            UserWarning,
+            match="The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored.",
+        ):
+            System(
+                description="Test Policy",
+                fides_key="test_system",
+                name="Test System",
+                organization_fides_key="1",
+                privacy_declarations=[
+                    PrivacyDeclaration(
+                        data_categories=[],
+                        data_subjects=[],
+                        data_use="provide",
+                        name="declaration-name",
+                        cookies=[{"name": "test_cookie"}],
+                    )
+                ],
+                system_type="SYSTEM",
+                cookies=[{"name": "test_cookie"}],
+            )
 
     def test_flexible_legal_basis_default(self):
         pd = PrivacyDeclaration(
