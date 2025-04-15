@@ -798,6 +798,23 @@ class Policy(FidesModel):
     _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
 
 
+def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:
+    """
+    Shared function to validate that the `cookies` field is deprecated and warn that it should not be used.
+    """
+    if isinstance(values, dict):
+        keys = values.keys()
+    else:
+        try:
+            keys = vars(values).keys()
+        except Exception:  # pylint: disable=broad-except
+            keys = {}  # type: ignore[assignment]
+    if "cookies" in keys:
+        warn(
+            "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
+        )
+
+
 class PrivacyDeclaration(BaseModel):
     """
     The PrivacyDeclaration resource model.
@@ -871,7 +888,6 @@ class PrivacyDeclaration(BaseModel):
         default_factory=list,
         description="The categories of personal data that this system shares with third parties.",
     )
-    model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="before")
     @classmethod
@@ -879,19 +895,10 @@ class PrivacyDeclaration(BaseModel):
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if isinstance(values, dict):
-            keys = values.keys()
-        else:
-            try:
-                keys = vars(values).keys()
-            except Exception:  # pylint: disable=broad-except
-                keys = {}  # type: ignore[assignment]
-        if "cookies" in keys:
-            warn(
-                "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
-            )
-
+        validate_deprecated_cookies(values)
         return values
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SystemMetadata(BaseModel):
@@ -1111,18 +1118,7 @@ class System(FidesModel):
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
-        if isinstance(values, dict):
-            keys = values.keys()
-        else:
-            try:
-                keys = vars(values).keys()
-            except Exception:  # pylint: disable=broad-except
-                keys = {}  # type: ignore[assignment]
-        if "cookies" in keys:
-            warn(
-                "The 'cookies' field is deprecated and should not be used. Any value given as this field will be ignored."
-            )
-
+        validate_deprecated_cookies(values)
         return values
 
     _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
