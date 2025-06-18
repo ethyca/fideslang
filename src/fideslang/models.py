@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Dict, List, Optional, Union, Any
+from typing import Annotated, Any, Dict, List, Optional, Union
 from warnings import warn
 
 from packaging.version import InvalidVersion, Version
@@ -531,7 +531,7 @@ class CollectionMeta(BaseModel):
 
     # partitioning metadata is kept open-ended as it is an experimental feature -
     # more strictly defined metadata structures will be supported in the future
-    partitioning: Optional[Dict] = None
+    partitioning: Optional[Union[Dict, List[Dict]]] = None
 
 
 class DatasetCollection(FidesopsMetaBackwardsCompat):
