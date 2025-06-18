@@ -16,11 +16,13 @@ The types of changes are:
 
 ## [Unreleased](https://github.com/ethyca/fideslang/compare/3.1.0...main)
 
+### Changed
+- Updated the type for `CollectionMeta.partitioning` to allow a list of dicts [#34](https://github.com/ethyca/fideslang/pull/34)
 
 ## [3.1.0](https://github.com/ethyca/fideslang/compare/3.0.9...3.1.0)
 
 ### Deprecated
-- Deprecated `Cookies` model and `.cookies` property on `System` and `PrivacyDeclaration` [#199](https://github.com/ethyca/fideslang/pull/27)
+- Deprecated `Cookies` model and `.cookies` property on `System` and `PrivacyDeclaration` [#27](https://github.com/ethyca/fideslang/pull/27)
 
 
 ## [3.0.9](https://github.com/ethyca/fideslang/compare/3.0.8...3.0.9)
