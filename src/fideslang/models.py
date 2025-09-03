@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Dict, List, Optional, Union
+from typing import Annotated, Any, Dict, List, Optional, Union, Literal
 from warnings import warn
 
 from packaging.version import InvalidVersion, Version
@@ -421,6 +421,10 @@ class FidesMeta(BaseModel):
         default=None,
         description="Optionally specify a masking strategy override for this field.",
     )
+    redact: Optional[Literal["name"]] = Field(
+        default=None,
+        description="Specify 'name' to indicate the field name should be redacted.",
+    )
 
     @field_validator("data_type")
     @classmethod
@@ -532,6 +536,10 @@ class CollectionMeta(BaseModel):
     # partitioning metadata is kept open-ended as it is an experimental feature -
     # more strictly defined metadata structures will be supported in the future
     partitioning: Optional[Union[Dict, List[Dict]]] = None
+    redact: Optional[Literal["name"]] = Field(
+        default=None,
+        description="Specify 'name' to indicate the collection name should be redacted.",
+    )
 
 
 class DatasetCollection(FidesopsMetaBackwardsCompat):
@@ -596,6 +604,10 @@ class DatasetMetadata(BaseModel):
     resource_id: Optional[str] = None
     after: Optional[List[FidesKey]] = None
     namespace: Optional[Dict] = None
+    redact: Optional[Literal["name"]] = Field(
+        default=None,
+        description="Specify 'name' to indicate the dataset name should be redacted.",
+    )
 
 
 class Dataset(FidesModel, FidesopsMetaBackwardsCompat):

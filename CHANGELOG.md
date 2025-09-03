@@ -16,6 +16,11 @@ The types of changes are:
 
 ## [Unreleased](https://github.com/ethyca/fideslang/compare/3.1.0...main)
 
+### Added
+- Added `fides_meta.redact` to datasets, collections, and fields [#35](https://github.com/ethyca/fideslang/pull/35)
+
+## [3.1.1](https://github.com/ethyca/fideslang/compare/3.1.0...3.1.1)
+
 ### Changed
 - Updated the type for `CollectionMeta.partitioning` to allow a list of dicts [#34](https://github.com/ethyca/fideslang/pull/34)
 
