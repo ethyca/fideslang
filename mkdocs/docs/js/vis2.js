@@ -836,10 +836,13 @@ Promise.all([
 
   const stratify = d3.stratify().id(accessor.id).parentId(accessor.parentId);
 
+  // Filter out deprecated resources (where version_deprecated is not empty)
+  const filterDeprecated = (data) => data.filter(d => !d.version_deprecated);
+
   // Chart data control
-  const categoriesRoot = stratify(categoriesCSV);
-  const usesRoot = stratify(usesCSV);
-  const subjectsRoot = stratify(subjectsCSV);
+  const categoriesRoot = stratify(filterDeprecated(categoriesCSV));
+  const usesRoot = stratify(filterDeprecated(usesCSV));
+  const subjectsRoot = stratify(filterDeprecated(subjectsCSV));
 
   const chartData = {
     categories: categoriesRoot,
