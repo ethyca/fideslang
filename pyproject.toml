@@ -89,6 +89,7 @@ exclude = '''
     | tests/data
 )/
 '''
+extend-exclude = "_version\\.py"
 
 ############
 ## Pylint ##
