@@ -14,7 +14,22 @@ The types of changes are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
-## [Unreleased](https://github.com/ethyca/fideslang/compare/3.1.0...main)
+## [Unreleased](https://github.com/ethyca/fideslang/compare/3.2.0...main)
+
+## [3.2.0](https://github.com/ethyca/fideslang/compare/3.1.2...3.2.0)
+
+See [v3.2.0 Migration Guide](docs/migration/v3.2.0.md) for complete migration instructions.
+
+### Added
+- 38 new data categories with enhanced hierarchies for professional, health, children, and demographic data [#35](https://github.com/ethyca/fideslang/pull/35)
+
+### Changed  
+- Major data category taxonomy restructuring: `user.biometric` → `user.biometrics`, `user.health_and_medical` → `user.health`, and other naming improvements [#35](https://github.com/ethyca/fideslang/pull/35)
+
+### Deprecated
+- 26 categories deprecated with `replaced_by` pointers for backward compatibility [#35](https://github.com/ethyca/fideslang/pull/35)
+
+## [3.1.2](https://github.com/ethyca/fideslang/compare/3.1.1...3.1.2)
 
 ### Added
 - Added `fides_meta.redact` to datasets, collections, and fields [#35](https://github.com/ethyca/fideslang/pull/35)

@@ -212,6 +212,49 @@ class TestVersioning:
         )
         assert tc.version_added == "1.2.3"
 
+    @pytest.mark.parametrize("TaxonomyClass", DEFAULT_TAXONOMY_CLASSES)
+    def test_replacement_chain_validity(self, TaxonomyClass) -> None:
+        """Test that all replacement chains are valid and don't create circular references."""
+        from typing import Set
+        from fideslang.default_taxonomy import DEFAULT_TAXONOMY
+        
+        # Get the taxonomy items based on the class type
+        if TaxonomyClass == DataCategory:
+            taxonomy_items = DEFAULT_TAXONOMY.data_category
+        elif TaxonomyClass == DataUse:
+            taxonomy_items = DEFAULT_TAXONOMY.data_use
+        else:  # DataSubject
+            taxonomy_items = DEFAULT_TAXONOMY.data_subject
+        
+        item_map = {item.fides_key: item for item in taxonomy_items}
+        
+        def follow_replacement_chain(fides_key: str, visited: Set[str]) -> str:
+            """Follow a replacement chain to its end, detecting cycles."""
+            if fides_key in visited:
+                raise ValueError(f"Circular replacement detected: {visited} -> {fides_key}")
+            
+            if fides_key not in item_map:
+                raise ValueError(f"Replacement target {fides_key} does not exist")
+                
+            item = item_map[fides_key]
+            if not item.replaced_by:
+                return fides_key  # End of chain
+                
+            return follow_replacement_chain(item.replaced_by, visited | {fides_key})
+        
+        # Test all deprecated items have valid replacement chains
+        deprecated_items = [item for item in taxonomy_items if item.version_deprecated]
+        
+        for item in deprecated_items:
+            if item.replaced_by:
+                try:
+                    final_replacement = follow_replacement_chain(item.fides_key, set())
+                    final_item = item_map[final_replacement]
+                    # Final replacement should not be deprecated
+                    assert not final_item.version_deprecated, f"Replacement chain for {item.fides_key} ends at deprecated item {final_replacement}"
+                except ValueError as e:
+                    pytest.fail(f"Invalid replacement chain for {item.fides_key}: {e}")
+
 
 @pytest.mark.unit
 def test_collections_duplicate_fields_error():

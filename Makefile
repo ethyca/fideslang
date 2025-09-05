@@ -78,7 +78,7 @@ check-all: teardown build-local-prod check-install check-static pytest
 	@echo "Running formatter, linter, typechecker and tests..."
 
 check-static:
-	@$(RUN) nox -s check_static
+	@$(RUN) nox -s static_checks
 
 check-install:
 	@echo "Checking that fideslang is installed..."
