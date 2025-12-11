@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Dict, List, Optional, Union, Literal
+from typing import Annotated, Any, Dict, List, Literal, Optional, Union
 from warnings import warn
 
 from packaging.version import InvalidVersion, Version
@@ -539,6 +539,10 @@ class CollectionMeta(BaseModel):
     redact: Optional[Literal["name"]] = Field(
         default=None,
         description="Specify 'name' to indicate the collection name should be redacted.",
+    )
+    query_hints: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="A list of query hints that should be applied when querying the collection.",
     )
 
 
