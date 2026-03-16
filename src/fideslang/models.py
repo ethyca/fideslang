@@ -3,6 +3,7 @@
 """
 Contains all of the Fides resources modeled as Pydantic models.
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -309,9 +310,9 @@ class DataSubjectRights(BaseModel):
         """
         strategy, rights = self.strategy, self.values
         if strategy in ("INCLUDE", "EXCLUDE"):
-            assert (
-                rights is not None
-            ), f"If {strategy} is chosen, rights must also be listed."
+            assert rights is not None, (
+                f"If {strategy} is chosen, rights must also be listed."
+            )
         return self
 
 
@@ -364,6 +365,10 @@ class DatasetFieldBase(BaseModel):
     data_categories: Optional[List[FidesKey]] = Field(
         default=None,
         description="Arrays of Data Categories, identified by `fides_key`, that applies to this field.",
+    )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to this field.",
     )
 
 
@@ -555,6 +560,10 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all fields in the collection.",
     )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all fields in the collection.",
+    )
     fields: List[DatasetField] = Field(
         description="An array of objects that describe the collection's fields.",
     )
@@ -617,6 +626,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
     data_categories: Optional[List[FidesKey]] = Field(
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all collections in the Dataset.",
+    )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all collections in the Dataset.",
     )
     fides_meta: Optional[DatasetMetadata] = Field(
         description=DatasetMetadata.__doc__, default=None
@@ -976,9 +989,9 @@ class DataFlow(BaseModel):
         """
 
         if self.fides_key == "user" or self.type == "user":
-            assert (
-                self.fides_key == "user" and self.type == "user"
-            ), "The 'user' fides_key is required for, and requires, the type 'user'"
+            assert self.fides_key == "user" and self.type == "user", (
+                "The 'user' fides_key is required for, and requires, the type 'user'"
+            )
 
         return self
 
@@ -1146,23 +1159,23 @@ class System(FidesModel):
         only reference the `fides_key`s of defined `DataFlow`s in said field(s).
         """
         privacy_declarations: List[PrivacyDeclaration] = self.privacy_declarations or []
-        for (
-            privacy_declaration
-        ) in privacy_declarations:  # pylint:disable=not-an-iterable
+        for privacy_declaration in privacy_declarations:  # pylint:disable=not-an-iterable
             for direction in ["egress", "ingress"]:
                 fides_keys = getattr(privacy_declaration, direction, None)
                 if fides_keys is not None:
                     data_flows = getattr(self, direction)
                     system = self.fides_key
-                    assert (
-                        data_flows is not None and len(data_flows) > 0
-                    ), f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with one or more resources and is applied to the System '{system}', which does not itself define any {direction}."
+                    assert data_flows is not None and len(data_flows) > 0, (
+                        f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with one or more resources and is applied to the System '{system}', which does not itself define any {direction}."
+                    )
 
                     for fides_key in fides_keys:
                         assert fides_key in [
                             data_flow.fides_key
                             for data_flow in data_flows  # pylint:disable=not-an-iterable
-                        ], f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
+                        ], (
+                            f"PrivacyDeclaration '{privacy_declaration.name}' defines {direction} with '{fides_key}' and is applied to the System '{system}', which does not itself define {direction} with that resource."
+                        )
 
         return self
 
