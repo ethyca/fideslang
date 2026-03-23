@@ -484,7 +484,7 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         return meta_values
 
     @model_validator(mode="after")
-    def validate_object_fields(
+    def validate_object_fields(  # type: ignore[misc]
         self,
         _: ValidationInfo,
     ) -> DatasetField:
@@ -570,8 +570,8 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
 
     fides_meta: Optional[CollectionMeta] = None
 
-    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)  # type: ignore[assignment]
-    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)  # type: ignore[assignment]
+    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)
+    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)
 
 
 class ContactDetails(BaseModel):
@@ -638,10 +638,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         description="An array of objects that describe the Dataset's collections.",
     )
 
-    _sort_collections: classmethod = field_validator("collections")(  # type: ignore[assignment]
+    _sort_collections: classmethod = field_validator("collections")(
         sort_list_objects_by_name
     )
-    _unique_items_in_list: classmethod = field_validator("collections")(  # type: ignore[assignment]
+    _unique_items_in_list: classmethod = field_validator("collections")(
         unique_items_in_list
     )
 
@@ -820,7 +820,7 @@ class Policy(FidesModel):
         description=PolicyRule.__doc__,
     )
 
-    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
+    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)
 
 
 def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:  # type: ignore[misc]
@@ -1146,7 +1146,7 @@ class System(FidesModel):
         validate_deprecated_cookies(values)
         return values
 
-    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
+    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(
         sort_list_objects_by_name
     )
 
@@ -1193,11 +1193,11 @@ class Taxonomy(BaseModel):
     """
 
     data_category: List[DataCategory] = Field(default_factory=list)
-    data_subject: Optional[List[DataSubject]] = Field(default_factory=list)
-    data_use: Optional[List[DataUse]] = Field(default_factory=list)
+    data_subject: Optional[List[DataSubject]] = Field(default_factory=list)  # type: ignore[arg-type]
+    data_use: Optional[List[DataUse]] = Field(default_factory=list)  # type: ignore[arg-type]
 
-    dataset: Optional[List[Dataset]] = Field(default_factory=list)
-    system: Optional[List[System]] = Field(default_factory=list)
-    policy: Optional[List[Policy]] = Field(default_factory=list)
+    dataset: Optional[List[Dataset]] = Field(default_factory=list)  # type: ignore[arg-type]
+    system: Optional[List[System]] = Field(default_factory=list)  # type: ignore[arg-type]
+    policy: Optional[List[Policy]] = Field(default_factory=list)  # type: ignore[arg-type]
 
     organization: List[Organization] = Field(default_factory=list)
