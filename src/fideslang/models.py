@@ -20,7 +20,6 @@ from pydantic import (
     HttpUrl,
     PositiveInt,
     SerializeAsAny,
-    ValidationInfo,
     field_validator,
     model_validator,
 )
@@ -76,11 +75,11 @@ class MaskingStrategyOverride(BaseModel):
     strategy: MaskingStrategies
 
 
-class FieldMaskingStrategyOverride(BaseModel):  # type: ignore[misc]
+class FieldMaskingStrategyOverride(BaseModel):
     """Overrides field-level masking strategies."""
 
     strategy: str
-    configuration: Optional[Dict[str, Any]] = {}  # type: ignore[misc]
+    configuration: Optional[Dict[str, Any]] = {}
 
 
 class FidesModel(BaseModel):
@@ -484,9 +483,8 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
         return meta_values
 
     @model_validator(mode="after")
-    def validate_object_fields(  # type: ignore[misc]
+    def validate_object_fields(
         self,
-        _: ValidationInfo,
     ) -> DatasetField:
         """Two validation checks for object fields:
         - If there are sub-fields specified, type should be either empty or 'object'
@@ -823,7 +821,7 @@ class Policy(FidesModel):
     _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)
 
 
-def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:  # type: ignore[misc]
+def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:
     """
     Shared function to validate that the `cookies` field is deprecated and warn that it should not be used.
     """
@@ -916,7 +914,7 @@ class PrivacyDeclaration(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -1139,7 +1137,7 @@ class System(FidesModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -1193,11 +1191,11 @@ class Taxonomy(BaseModel):
     """
 
     data_category: List[DataCategory] = Field(default_factory=list)
-    data_subject: Optional[List[DataSubject]] = Field(default_factory=list)  # type: ignore[arg-type]
-    data_use: Optional[List[DataUse]] = Field(default_factory=list)  # type: ignore[arg-type]
+    data_subject: List[DataSubject] = Field(default_factory=list)
+    data_use: List[DataUse] = Field(default_factory=list)
 
-    dataset: Optional[List[Dataset]] = Field(default_factory=list)  # type: ignore[arg-type]
-    system: Optional[List[System]] = Field(default_factory=list)  # type: ignore[arg-type]
-    policy: Optional[List[Policy]] = Field(default_factory=list)  # type: ignore[arg-type]
+    dataset: List[Dataset] = Field(default_factory=list)
+    system: List[System] = Field(default_factory=list)
+    policy: List[Policy] = Field(default_factory=list)
 
     organization: List[Organization] = Field(default_factory=list)

@@ -58,7 +58,7 @@ def unique_items_in_list(values: List) -> List:
     return values
 
 
-def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:  # type: ignore[misc]
+def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:
     """
     Check to make sure that the fides_key doesn't match other fides_key
     references within an object.
@@ -71,7 +71,7 @@ def no_self_reference(value: FidesKey, values: ValidationInfo) -> FidesKey:  # t
     return value
 
 
-def deprecated_version_later_than_added(  # type: ignore[misc]
+def deprecated_version_later_than_added(
     version_deprecated: Optional[str], values: ValidationInfo
 ) -> Optional[str]:
     """
@@ -104,7 +104,7 @@ def deprecated_version_later_than_added(  # type: ignore[misc]
     return version_deprecated
 
 
-def has_versioning_if_default(is_default: bool, values: ValidationInfo) -> bool:  # type: ignore[misc]
+def has_versioning_if_default(is_default: bool, values: ValidationInfo) -> bool:
     """
     Check to make sure that version fields are set for default items.
     """
@@ -129,7 +129,7 @@ def has_versioning_if_default(is_default: bool, values: ValidationInfo) -> bool:
     return is_default
 
 
-def is_deprecated_if_replaced(replaced_by: str, values: ValidationInfo) -> str:  # type: ignore[misc]
+def is_deprecated_if_replaced(replaced_by: str, values: ValidationInfo) -> str:
     """
     Check to make sure that the item has been deprecated if there is a replacement.
     """
@@ -140,7 +140,7 @@ def is_deprecated_if_replaced(replaced_by: str, values: ValidationInfo) -> str: 
     return replaced_by
 
 
-def matching_parent_key(parent_key: FidesKey, values: ValidationInfo) -> FidesKey:  # type: ignore[misc]
+def matching_parent_key(parent_key: FidesKey, values: ValidationInfo) -> FidesKey:
     """
     Confirm that the parent_key matches the parent parsed from the FidesKey.
     """
