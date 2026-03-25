@@ -3,6 +3,7 @@
 """
 Contains all of the Fides resources modeled as Pydantic models.
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -19,7 +20,6 @@ from pydantic import (
     HttpUrl,
     PositiveInt,
     SerializeAsAny,
-    ValidationInfo,
     field_validator,
     model_validator,
 )
@@ -75,11 +75,11 @@ class MaskingStrategyOverride(BaseModel):
     strategy: MaskingStrategies
 
 
-class FieldMaskingStrategyOverride(BaseModel):  # type: ignore[misc]
+class FieldMaskingStrategyOverride(BaseModel):
     """Overrides field-level masking strategies."""
 
     strategy: str
-    configuration: Optional[Dict[str, Any]] = {}  # type: ignore[misc]
+    configuration: Optional[Dict[str, Any]] = {}
 
 
 class FidesModel(BaseModel):
@@ -365,6 +365,10 @@ class DatasetFieldBase(BaseModel):
         default=None,
         description="Arrays of Data Categories, identified by `fides_key`, that applies to this field.",
     )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to this field.",
+    )
 
 
 class EdgeDirection(str, Enum):
@@ -481,7 +485,6 @@ class DatasetField(DatasetFieldBase, FidesopsMetaBackwardsCompat):
     @model_validator(mode="after")
     def validate_object_fields(
         self,
-        _: ValidationInfo,
     ) -> DatasetField:
         """Two validation checks for object fields:
         - If there are sub-fields specified, type should be either empty or 'object'
@@ -555,14 +558,18 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all fields in the collection.",
     )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all fields in the collection.",
+    )
     fields: List[DatasetField] = Field(
         description="An array of objects that describe the collection's fields.",
     )
 
     fides_meta: Optional[CollectionMeta] = None
 
-    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)  # type: ignore[assignment]
-    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)  # type: ignore[assignment]
+    _sort_fields: classmethod = field_validator("fields")(sort_list_objects_by_name)
+    _unique_items_in_list: classmethod = field_validator("fields")(unique_items_in_list)
 
 
 class ContactDetails(BaseModel):
@@ -618,6 +625,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all collections in the Dataset.",
     )
+    data_purposes: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all collections in the Dataset.",
+    )
     fides_meta: Optional[DatasetMetadata] = Field(
         description=DatasetMetadata.__doc__, default=None
     )
@@ -625,10 +636,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         description="An array of objects that describe the Dataset's collections.",
     )
 
-    _sort_collections: classmethod = field_validator("collections")(  # type: ignore[assignment]
+    _sort_collections: classmethod = field_validator("collections")(
         sort_list_objects_by_name
     )
-    _unique_items_in_list: classmethod = field_validator("collections")(  # type: ignore[assignment]
+    _unique_items_in_list: classmethod = field_validator("collections")(
         unique_items_in_list
     )
 
@@ -807,10 +818,10 @@ class Policy(FidesModel):
         description=PolicyRule.__doc__,
     )
 
-    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)  # type: ignore[assignment]
+    _sort_rules: classmethod = field_validator("rules")(sort_list_objects_by_name)
 
 
-def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:  # type: ignore[misc]
+def validate_deprecated_cookies(values: Dict[str, Any] | Any) -> None:
     """
     Shared function to validate that the `cookies` field is deprecated and warn that it should not be used.
     """
@@ -903,7 +914,7 @@ class PrivacyDeclaration(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
@@ -1126,14 +1137,14 @@ class System(FidesModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:  # type: ignore[misc]
+    def validate_cookies(cls, values: Dict[str, Any] | Any) -> Dict[str, Any]:
         """
         Validate that the `cookies` field is deprecated and warn that it should not be used.
         """
         validate_deprecated_cookies(values)
         return values
 
-    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(  # type: ignore[assignment]
+    _sort_privacy_declarations: classmethod = field_validator("privacy_declarations")(
         sort_list_objects_by_name
     )
 
@@ -1180,11 +1191,11 @@ class Taxonomy(BaseModel):
     """
 
     data_category: List[DataCategory] = Field(default_factory=list)
-    data_subject: Optional[List[DataSubject]] = Field(default_factory=list)
-    data_use: Optional[List[DataUse]] = Field(default_factory=list)
+    data_subject: List[DataSubject] = Field(default_factory=list)
+    data_use: List[DataUse] = Field(default_factory=list)
 
-    dataset: Optional[List[Dataset]] = Field(default_factory=list)
-    system: Optional[List[System]] = Field(default_factory=list)
-    policy: Optional[List[Policy]] = Field(default_factory=list)
+    dataset: List[Dataset] = Field(default_factory=list)
+    system: List[System] = Field(default_factory=list)
+    policy: List[Policy] = Field(default_factory=list)
 
     organization: List[Organization] = Field(default_factory=list)
