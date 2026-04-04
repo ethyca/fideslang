@@ -71,8 +71,8 @@ data_category:
   description: Behavioral data about the subject.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.biometrics
   is_default: true
   fides_key: user.biometric
   organization_fides_key: default_organization
@@ -80,14 +80,34 @@ data_category:
   name: Biometric Data
   description: Encoded characteristics provided by a user.
   parent_key: user
-- version_added: 2.0.0
+- version_added: 3.2.0
   version_deprecated: null
   replaced_by: null
+  is_default: true
+  fides_key: user.biometrics
+  organization_fides_key: default_organization
+  tags: null
+  name: Biometrics
+  description: Encoded characteristics provided by a user.
+  parent_key: user
+- version_added: 2.0.0
+  version_deprecated: 3.2.0
+  replaced_by: user.children
   is_default: true
   fides_key: user.childrens
   organization_fides_key: default_organization
   tags: null
   name: Children's Data
+  description: Data relating to children.
+  parent_key: user
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.children
+  organization_fides_key: default_organization
+  tags: null
+  name: Children
   description: Data relating to children.
   parent_key: user
 - version_added: 2.0.0
@@ -151,14 +171,34 @@ data_category:
   description: Payment data related to user.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.social_activity
   is_default: true
   fides_key: user.social
   organization_fides_key: default_organization
   tags: null
   name: Social Data
   description: Social activity and interaction data.
+  parent_key: user
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.social_activity
+  organization_fides_key: default_organization
+  tags: null
+  name: Social Activity Data
+  description: Social activity and interaction data.
+  parent_key: user
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.settings
+  organization_fides_key: default_organization
+  tags: null
+  name: User Settings
+  description: User preferences and settings data.
   parent_key: user
 - version_added: 2.0.0
   version_deprecated: null
@@ -171,8 +211,8 @@ data_category:
   description: Unique identifier for a user assigned through system use.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.device.telemetry
   is_default: true
   fides_key: user.telemetry
   organization_fides_key: default_organization
@@ -181,8 +221,8 @@ data_category:
   description: User identifiable measurement data from system sensors and monitoring.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.device.sensor
   is_default: true
   fides_key: user.user_sensor
   organization_fides_key: default_organization
@@ -191,18 +231,8 @@ data_category:
   description: Measurement data about a user's environment through system use.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
-  is_default: true
-  fides_key: user.workplace
-  organization_fides_key: default_organization
-  tags: null
-  name: Workplace
-  description: Organization of employment.
-  parent_key: user
-- version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.device.sensor
   is_default: true
   fides_key: user.sensor
   organization_fides_key: default_organization
@@ -231,13 +261,23 @@ data_category:
   description: State provided identification data.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.health
   is_default: true
   fides_key: user.health_and_medical
   organization_fides_key: default_organization
   tags: null
   name: Health and Medical Data
+  description: Health records or individual's personal medical information.
+  parent_key: user
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health
+  organization_fides_key: default_organization
+  tags: null
+  name: Health Data
   description: Health records or individual's personal medical information.
   parent_key: user
 - version_added: 2.0.0
@@ -271,8 +311,8 @@ data_category:
   description: Privacy preferences or settings set by the subject.
   parent_key: user
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.professional_information.job_title
   is_default: true
   fides_key: user.job_title
   organization_fides_key: default_organization
@@ -281,8 +321,28 @@ data_category:
   description: Professional data.
   parent_key: user
 - version_added: 2.0.0
+  version_deprecated: 3.2.0
+  replaced_by: user.professional_information.workplace
+  is_default: true
+  fides_key: user.workplace
+  organization_fides_key: default_organization
+  tags: null
+  name: Workplace
+  description: Organization of employment.
+  parent_key: user
+- version_added: 3.2.0
   version_deprecated: null
   replaced_by: null
+  is_default: true
+  fides_key: user.professional_information
+  organization_fides_key: default_organization
+  tags: null
+  name: Professional Information
+  description: Professional and employment-related information.
+  parent_key: user
+- version_added: 2.0.0
+  version_deprecated: 3.2.0
+  replaced_by: user.settings
   is_default: true
   fides_key: user.account.settings
   organization_fides_key: default_organization
@@ -311,13 +371,23 @@ data_category:
   description: Authentication credentials to a system.
   parent_key: user.authorization
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.authorization.biometrics
   is_default: true
   fides_key: user.authorization.biometric
   organization_fides_key: default_organization
   tags: null
   name: Biometric Credentials
+  description: Credentials for system authentication.
+  parent_key: user.authorization
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.authorization.biometrics
+  organization_fides_key: default_organization
+  tags: null
+  name: Biometric Authentication
   description: Credentials for system authentication.
   parent_key: user.authorization
 - version_added: 2.0.0
@@ -371,8 +441,8 @@ data_category:
   description: Search history of the subject.
   parent_key: user.behavior
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.biometrics.fingerprint
   is_default: true
   fides_key: user.biometric.fingerprint
   organization_fides_key: default_organization
@@ -381,8 +451,8 @@ data_category:
   description: Fingerprint encoded data about a subject.
   parent_key: user.biometric
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.biometrics.retinal
   is_default: true
   fides_key: user.biometric.retinal
   organization_fides_key: default_organization
@@ -391,8 +461,8 @@ data_category:
   description: Retinal data about a subject.
   parent_key: user.biometric
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.biometrics.voice
   is_default: true
   fides_key: user.biometric.voice
   organization_fides_key: default_organization
@@ -401,8 +471,8 @@ data_category:
   description: Voice encoded data about a subject.
   parent_key: user.biometric
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.biometrics
   is_default: true
   fides_key: user.biometric.health
   organization_fides_key: default_organization
@@ -410,6 +480,56 @@ data_category:
   name: Biometric Health Data
   description: Encoded characteristic collected about a user.
   parent_key: user.biometric
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.biometrics.fingerprint
+  organization_fides_key: default_organization
+  tags: null
+  name: Fingerprint Data
+  description: Fingerprint encoded data about a subject.
+  parent_key: user.biometrics
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.biometrics.retinal
+  organization_fides_key: default_organization
+  tags: null
+  name: Retinal Data
+  description: Retinal data about a subject.
+  parent_key: user.biometrics
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.biometrics.voice
+  organization_fides_key: default_organization
+  tags: null
+  name: Voice Data
+  description: Voice encoded data about a subject.
+  parent_key: user.biometrics
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.children.children_under_thirteen
+  organization_fides_key: default_organization
+  tags: null
+  name: Children Under Thirteen
+  description: Data relating to children under the age of thirteen.
+  parent_key: user.children
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.children.thirteen_to_sixteen
+  organization_fides_key: default_organization
+  tags: null
+  name: Children Thirteen to Sixteen
+  description: Data relating to children between the ages of thirteen and sixteen.
+  parent_key: user.children
 - version_added: 2.0.0
   version_deprecated: null
   replaced_by: null
@@ -441,13 +561,23 @@ data_category:
   description: User's phone number.
   parent_key: user.contact
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.contact.social_url
   is_default: true
   fides_key: user.contact.url
   organization_fides_key: default_organization
   tags: null
   name: User Website
+  description: Subject's websites or links to social and personal profiles.
+  parent_key: user.contact
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.contact.social_url
+  organization_fides_key: default_organization
+  tags: null
+  name: Social Media URL
   description: Subject's websites or links to social and personal profiles.
   parent_key: user.contact
 - version_added: 2.0.0
@@ -461,8 +591,8 @@ data_category:
   description: Data Subject's fax number.
   parent_key: user.contact
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.contact
   is_default: true
   fides_key: user.contact.organization
   organization_fides_key: default_organization
@@ -519,6 +649,16 @@ data_category:
   tags: null
   name: User Contact Street
   description: User's street level address data.
+  parent_key: user.contact.address
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.contact.address.mailing_address
+  organization_fides_key: default_organization
+  tags: null
+  name: Mailing Address
+  description: User's mailing address information.
   parent_key: user.contact.address
 - version_added: 2.0.0
   version_deprecated: null
@@ -651,6 +791,46 @@ data_category:
   name: Sexual Orientation
   description: Sexual orientation of data subject.
   parent_key: user.demographic
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.demographic.citizenship_or_immigration_status
+  organization_fides_key: default_organization
+  tags: null
+  name: Citizenship or Immigration Status
+  description: Citizenship or immigration status of data subject.
+  parent_key: user.demographic
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.demographic.philosophical_belief
+  organization_fides_key: default_organization
+  tags: null
+  name: Philosophical Belief
+  description: Philosophical beliefs or worldview of data subject.
+  parent_key: user.demographic
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.demographic.protected_classifications
+  organization_fides_key: default_organization
+  tags: null
+  name: Protected Classifications
+  description: Protected classifications or sensitive attributes of data subject.
+  parent_key: user.demographic
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.demographic.union_membership
+  organization_fides_key: default_organization
+  tags: null
+  name: Union Membership
+  description: Union membership status of data subject.
+  parent_key: user.demographic
 - version_added: 2.0.0
   version_deprecated: null
   replaced_by: null
@@ -690,6 +870,26 @@ data_category:
   tags: null
   name: IP Address
   description: Unique identifier related to device connection.
+  parent_key: user.device
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.device.sensor
+  organization_fides_key: default_organization
+  tags: null
+  name: Device Sensor Data
+  description: Measurement data from device sensors and monitoring systems.
+  parent_key: user.device
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.device.telemetry
+  organization_fides_key: default_organization
+  tags: null
+  name: Device Telemetry
+  description: User identifiable measurement data from device sensors and monitoring.
   parent_key: user.device
 - version_added: 2.0.0
   version_deprecated: null
@@ -771,9 +971,139 @@ data_category:
   name: Vehicle Registration
   description: State issued license plate or vehicle registration data.
   parent_key: user.government_id
-- version_added: 2.0.0
+- version_added: 3.2.0
   version_deprecated: null
   replaced_by: null
+  is_default: true
+  fides_key: user.health.genetic
+  organization_fides_key: default_organization
+  tags: null
+  name: Genetic Data
+  description: Data about the genetic makeup provided by the subject.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.insurance_beneficiary_id
+  organization_fides_key: default_organization
+  tags: null
+  name: Health Insurance ID
+  description: Health insurance beneficiary number of the subject.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.record_id
+  organization_fides_key: default_organization
+  tags: null
+  name: Health Record ID
+  description: Medical record identifiers belonging to a subject.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.baby_formula
+  organization_fides_key: default_organization
+  tags: null
+  name: Baby Formula Information
+  description: Information about baby formula usage or preferences.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.condition
+  organization_fides_key: default_organization
+  tags: null
+  name: Health Condition
+  description: Health condition or status information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.maternity_clothing
+  organization_fides_key: default_organization
+  tags: null
+  name: Maternity Clothing
+  description: Information about maternity clothing purchases or preferences.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.medical_diagnosis
+  organization_fides_key: default_organization
+  tags: null
+  name: Medical Diagnosis
+  description: Medical diagnosis information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.medications
+  organization_fides_key: default_organization
+  tags: null
+  name: Medications
+  description: Information about medications.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.prescriptions
+  organization_fides_key: default_organization
+  tags: null
+  name: Prescriptions
+  description: Prescription medication information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.reproductive_or_sexual
+  organization_fides_key: default_organization
+  tags: null
+  name: Reproductive or Sexual Health
+  description: Reproductive or sexual health information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.social_psychological_behavioral
+  organization_fides_key: default_organization
+  tags: null
+  name: Social, Psychological, or Behavioral Health
+  description: Social, psychological, or behavioral health information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.symptons
+  organization_fides_key: default_organization
+  tags: null
+  name: Health Symptoms
+  description: Health symptom information.
+  parent_key: user.health
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.health.treatment
+  organization_fides_key: default_organization
+  tags: null
+  name: Medical Treatment
+  description: Medical treatment information.
+  parent_key: user.health
+- version_added: 2.0.0
+  version_deprecated: 3.2.0
+  replaced_by: user.health.genetic
   is_default: true
   fides_key: user.health_and_medical.genetic
   organization_fides_key: default_organization
@@ -782,8 +1112,8 @@ data_category:
   description: Data about the genetic makeup provided by the subject.
   parent_key: user.health_and_medical
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.health.insurance_beneficiary_id
   is_default: true
   fides_key: user.health_and_medical.insurance_beneficiary_id
   organization_fides_key: default_organization
@@ -792,8 +1122,8 @@ data_category:
   description: Health insurance beneficiary number of the subject.
   parent_key: user.health_and_medical
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.health.record_id
   is_default: true
   fides_key: user.health_and_medical.record_id
   organization_fides_key: default_organization
@@ -802,14 +1132,24 @@ data_category:
   description: Medical record identifiers belonging to a subject.
   parent_key: user.health_and_medical
 - version_added: 2.0.0
-  version_deprecated: null
-  replaced_by: null
+  version_deprecated: 3.2.0
+  replaced_by: user.location.coarse
   is_default: true
   fides_key: user.location.imprecise
   organization_fides_key: default_organization
   tags: null
   name: Imprecise Subject Location
   description: Imprecise location derived from sensors (more than 500M).
+  parent_key: user.location
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.location.coarse
+  organization_fides_key: default_organization
+  tags: null
+  name: Coarse Subject Location
+  description: Coarse location derived from sensors (more than 500M).
   parent_key: user.location
 - version_added: 2.0.0
   version_deprecated: null
@@ -841,9 +1181,29 @@ data_category:
   name: Last Name
   description: Subject's last, or family, name.
   parent_key: user.name
-- version_added: 2.0.0
+- version_added: 3.2.0
   version_deprecated: null
   replaced_by: null
+  is_default: true
+  fides_key: user.professional_information.job_title
+  organization_fides_key: default_organization
+  tags: null
+  name: Professional Job Title
+  description: Professional job title or position.
+  parent_key: user.professional_information
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.professional_information.workplace
+  organization_fides_key: default_organization
+  tags: null
+  name: Professional Workplace
+  description: Organization or workplace of employment.
+  parent_key: user.professional_information
+- version_added: 2.0.0
+  version_deprecated: 3.2.0
+  replaced_by: user.unique_id
   is_default: true
   fides_key: user.unique_id.pseudonymous
   organization_fides_key: default_organization
@@ -851,4 +1211,25 @@ data_category:
   name: Pseudonymous User ID
   description: A pseudonymous, or probabilistic identifier generated from other subject
     or device data belonging to the subject.
+  parent_key: user.unique_id
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.unique_id.deterministic
+  organization_fides_key: default_organization
+  tags: null
+  name: Deterministic User ID
+  description: A deterministic identifier that can be consistently generated from
+    user data.
+  parent_key: user.unique_id
+- version_added: 3.2.0
+  version_deprecated: null
+  replaced_by: null
+  is_default: true
+  fides_key: user.unique_id.probablistic
+  organization_fides_key: default_organization
+  tags: null
+  name: Probabilistic User ID
+  description: A probabilistic identifier generated from other subject or device data.
   parent_key: user.unique_id

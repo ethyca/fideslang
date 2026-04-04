@@ -6,6 +6,7 @@ from .data_categories import DEFAULT_DATA_CATEGORIES
 from .data_subjects import DEFAULT_DATA_SUBJECTS
 from .data_uses import DEFAULT_DATA_USES
 from .organizations import DEFAULT_ORGANIZATIONS
+from .utils import check_for_deprecated_default_fides_key, CheckDeprecationResult
 
 sort_data_types = lambda x: (
     x.parent_key if hasattr(x, "parent_key") and x.parent_key else x.fides_key
