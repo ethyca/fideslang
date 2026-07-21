@@ -52,6 +52,24 @@ is_deprecated_if_replaced_validator = field_validator("replaced_by")(
     is_deprecated_if_replaced
 )
 
+
+def mirror_data_uses_and_purposes(instance: Any) -> Any:
+    """Expand/contract dual-write for the ``data_purposes`` -> ``data_uses`` rename.
+
+    ``data_purposes`` is the deprecated original field (released in 3.1.x);
+    ``data_uses`` is its replacement. Keep both mirrored so a dataset always
+    carries whichever one a reader expects — an N-1 reader (``data_purposes``)
+    and an N reader (``data_uses``) both resolve. Remove this and the
+    ``data_purposes`` field once the rename reaches the contract phase.
+    """
+    uses = getattr(instance, "data_uses", None)
+    purposes = getattr(instance, "data_purposes", None)
+    if uses and not purposes:
+        instance.data_purposes = list(uses)
+    elif purposes and not uses:
+        instance.data_uses = list(purposes)
+    return instance
+
 # Reusable Fields
 name_field = Field(description="Human-Readable name for this resource.")
 description_field = Field(
@@ -365,10 +383,17 @@ class DatasetFieldBase(BaseModel):
         default=None,
         description="Arrays of Data Categories, identified by `fides_key`, that applies to this field.",
     )
+    data_uses: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Uses, identified by `fides_key`, that apply to this field.",
+    )
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        description="Array of Data Purpose resources, identified by `fides_key`, that apply to this field.",
+        deprecated=True,
+        description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
+
+    _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
 
 
 class EdgeDirection(str, Enum):
@@ -558,10 +583,18 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all fields in the collection.",
     )
+    data_uses: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Uses, identified by `fides_key`, that apply to all fields in the collection.",
+    )
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all fields in the collection.",
+        deprecated=True,
+        description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
+
+    _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
+
     fields: List[DatasetField] = Field(
         description="An array of objects that describe the collection's fields.",
     )
@@ -625,10 +658,18 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Category resources identified by `fides_key`, that apply to all collections in the Dataset.",
     )
+    data_uses: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Uses, identified by `fides_key`, that apply to all collections in the Dataset.",
+    )
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        description="Array of Data Purpose resources, identified by `fides_key`, that apply to all collections in the Dataset.",
+        deprecated=True,
+        description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
+
+    _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
+
     fides_meta: Optional[DatasetMetadata] = Field(
         description=DatasetMetadata.__doc__, default=None
     )
