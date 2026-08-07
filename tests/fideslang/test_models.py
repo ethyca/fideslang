@@ -565,6 +565,41 @@ class TestDataset:
             ],
         )
 
+    def test_dataset_taxonomy_fields_at_every_level(self):
+        """data_categories, data_uses, and data_subjects apply at the dataset,
+        collection, and field levels; data_purposes stays mirrored with
+        data_uses during the rename."""
+        dataset = Dataset(
+            fides_key="dataset_1",
+            data_categories=["user.contact"],
+            data_uses=["marketing"],
+            data_subjects=["customer"],
+            collections=[
+                DatasetCollection(
+                    name="collection_1",
+                    data_categories=["user.contact"],
+                    data_uses=["marketing"],
+                    data_subjects=["employee"],
+                    fields=[
+                        DatasetField(
+                            name="field_1",
+                            data_categories=["user.contact.email"],
+                            data_uses=["marketing.advertising"],
+                            data_subjects=["customer"],
+                        )
+                    ],
+                )
+            ],
+        )
+        assert dataset.data_subjects == ["customer"]
+        assert dataset.collections[0].data_subjects == ["employee"]
+        assert dataset.collections[0].fields[0].data_subjects == ["customer"]
+        # the deprecated alias mirrors data_uses at every level
+        assert dataset.data_purposes == ["marketing"]
+        assert dataset.collections[0].fields[0].data_purposes == [
+            "marketing.advertising"
+        ]
+
     def test_dataset_collection_skip_processing(self):
         collection = DatasetCollection(
             name="dataset_collection_1",

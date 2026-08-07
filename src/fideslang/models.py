@@ -393,6 +393,10 @@ class DatasetFieldBase(BaseModel):
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 
+    data_subjects: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Subjects, identified by `fides_key`, that apply to this field.",
+    )
     _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
 
 
@@ -593,6 +597,10 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 
+    data_subjects: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Subjects, identified by `fides_key`, that apply to this collection.",
+    )
     _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
 
     fields: List[DatasetField] = Field(
@@ -668,6 +676,10 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 
+    data_subjects: Optional[List[FidesKey]] = Field(
+        default=None,
+        description="Array of Data Subjects, identified by `fides_key`, that apply to this Dataset.",
+    )
     _mirror_data_uses = model_validator(mode="after")(mirror_data_uses_and_purposes)
 
     fides_meta: Optional[DatasetMetadata] = Field(
