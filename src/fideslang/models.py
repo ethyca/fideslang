@@ -70,6 +70,7 @@ def mirror_data_uses_and_purposes(instance: Any) -> Any:
         instance.data_uses = list(purposes)
     return instance
 
+
 # Reusable Fields
 name_field = Field(description="Human-Readable name for this resource.")
 description_field = Field(

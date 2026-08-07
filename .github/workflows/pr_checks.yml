@@ -51,10 +51,13 @@ jobs:
           cache: "pip"
 
       - name: Pin Cython
+        # PyYAML 5.4.1 can't build under Cython 3 (cython_sources removed),
+        # and newer pip stopped propagating PIP_CONSTRAINT into the isolated
+        # build env; preinstall the old Cython and build without isolation
         run: |
-          echo 'Cython < 3.0' > /tmp/constraint.txt
-          PIP_CONSTRAINT=/tmp/constraint.txt pip wheel PyYAML==5.4.1
-          pip install 'PyYAML==5.4.1'
+          pip install 'Cython<3.0'
+          pip wheel 'PyYAML==5.4.1' --no-build-isolation
+          pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Package
         run: pip install .
@@ -79,10 +82,13 @@ jobs:
           cache: "pip"
 
       - name: Pin Cython
+        # PyYAML 5.4.1 can't build under Cython 3 (cython_sources removed),
+        # and newer pip stopped propagating PIP_CONSTRAINT into the isolated
+        # build env; preinstall the old Cython and build without isolation
         run: |
-          echo 'Cython < 3.0' > /tmp/constraint.txt
-          PIP_CONSTRAINT=/tmp/constraint.txt pip wheel PyYAML==5.4.1
-          pip install 'PyYAML==5.4.1'
+          pip install 'Cython<3.0'
+          pip wheel 'PyYAML==5.4.1' --no-build-isolation
+          pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Nox
         run: pip install nox
@@ -109,10 +115,13 @@ jobs:
           cache: "pip"
 
       - name: Pin Cython
+        # PyYAML 5.4.1 can't build under Cython 3 (cython_sources removed),
+        # and newer pip stopped propagating PIP_CONSTRAINT into the isolated
+        # build env; preinstall the old Cython and build without isolation
         run: |
-          echo 'Cython < 3.0' > /tmp/constraint.txt
-          PIP_CONSTRAINT=/tmp/constraint.txt pip wheel PyYAML==5.4.1
-          pip install 'PyYAML==5.4.1'
+          pip install 'Cython<3.0'
+          pip wheel 'PyYAML==5.4.1' --no-build-isolation
+          pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Nox
         run: pip install nox
