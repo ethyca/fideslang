@@ -56,7 +56,6 @@ jobs:
         # build env; preinstall the old Cython and build without isolation
         run: |
           pip install 'Cython<3.0' wheel setuptools
-          pip wheel 'PyYAML==5.4.1' --no-build-isolation
           pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Package
@@ -87,7 +86,6 @@ jobs:
         # build env; preinstall the old Cython and build without isolation
         run: |
           pip install 'Cython<3.0' wheel setuptools
-          pip wheel 'PyYAML==5.4.1' --no-build-isolation
           pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Nox
@@ -120,7 +118,6 @@ jobs:
         # build env; preinstall the old Cython and build without isolation
         run: |
           pip install 'Cython<3.0' wheel setuptools
-          pip wheel 'PyYAML==5.4.1' --no-build-isolation
           pip install 'PyYAML==5.4.1' --no-build-isolation
 
       - name: Install Nox

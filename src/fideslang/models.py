@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Dict, List, Optional, Union, Literal
+from typing import Annotated, Any, Dict, List, Optional, Union, Literal, TypeVar
 from warnings import warn
 
 from packaging.version import InvalidVersion, Version
@@ -53,7 +53,10 @@ is_deprecated_if_replaced_validator = field_validator("replaced_by")(
 )
 
 
-def mirror_data_uses_and_purposes(instance: Any) -> Any:
+_MirroredModel = TypeVar("_MirroredModel")
+
+
+def mirror_data_uses_and_purposes(instance: _MirroredModel) -> _MirroredModel:
     """Expand/contract dual-write for the ``data_purposes`` -> ``data_uses`` rename.
 
     ``data_purposes`` is the deprecated original field (released in 3.1.x);
@@ -61,13 +64,25 @@ def mirror_data_uses_and_purposes(instance: Any) -> Any:
     carries whichever one a reader expects — an N-1 reader (``data_purposes``)
     and an N reader (``data_uses``) both resolve. Remove this and the
     ``data_purposes`` field once the rename reaches the contract phase.
+
+    Branching is on ``is None``, never truthiness: ``[]`` is a real value
+    ("cleared"), and treating it as absent would let the deprecated alias
+    resurrect deleted values on any full-object round trip. When both fields
+    arrive set and different, ``data_uses`` wins — a round-tripped payload
+    always carries a stale alias, so the replacement field is the one the
+    caller meant.
+
+    Safe to mutate here only because none of these models set
+    ``validate_assignment=True``; adding that config would recurse.
     """
     uses = getattr(instance, "data_uses", None)
     purposes = getattr(instance, "data_purposes", None)
-    if uses and not purposes:
-        instance.data_purposes = list(uses)
-    elif purposes and not uses:
-        instance.data_uses = list(purposes)
+    if uses is not None:
+        # data_uses is authoritative whenever present, including [] and the
+        # both-set-and-divergent case
+        instance.data_purposes = list(uses)  # type: ignore[attr-defined]
+    elif purposes is not None:
+        instance.data_uses = list(purposes)  # type: ignore[attr-defined]
     return instance
 
 
@@ -388,9 +403,11 @@ class DatasetFieldBase(BaseModel):
         default=None,
         description="Array of Data Uses, identified by `fides_key`, that apply to this field.",
     )
+    # deprecated in favor of data_uses; Field(deprecated=True) is not used
+    # because it is inert (and schema-divergent) on pydantic <2.7, which this
+    # package still supports
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        deprecated=True,
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 
@@ -592,9 +609,11 @@ class DatasetCollection(FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Uses, identified by `fides_key`, that apply to all fields in the collection.",
     )
+    # deprecated in favor of data_uses; Field(deprecated=True) is not used
+    # because it is inert (and schema-divergent) on pydantic <2.7, which this
+    # package still supports
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        deprecated=True,
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 
@@ -671,9 +690,11 @@ class Dataset(FidesModel, FidesopsMetaBackwardsCompat):
         default=None,
         description="Array of Data Uses, identified by `fides_key`, that apply to all collections in the Dataset.",
     )
+    # deprecated in favor of data_uses; Field(deprecated=True) is not used
+    # because it is inert (and schema-divergent) on pydantic <2.7, which this
+    # package still supports
     data_purposes: Optional[List[FidesKey]] = Field(
         default=None,
-        deprecated=True,
         description="Deprecated alias for `data_uses`; kept in sync during the rename. Use `data_uses`.",
     )
 

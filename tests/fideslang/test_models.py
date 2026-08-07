@@ -596,9 +596,72 @@ class TestDataset:
         assert dataset.collections[0].fields[0].data_subjects == ["customer"]
         # the deprecated alias mirrors data_uses at every level
         assert dataset.data_purposes == ["marketing"]
+        assert dataset.collections[0].data_purposes == ["marketing"]
         assert dataset.collections[0].fields[0].data_purposes == [
             "marketing.advertising"
         ]
+
+    def test_data_purposes_only_payload_fills_data_uses(self):
+        """The compatibility path: a 3.1.x dataset that carries only the
+        deprecated data_purposes parses with data_uses filled in."""
+        dataset = Dataset(
+            fides_key="dataset_1",
+            data_purposes=["marketing"],
+            collections=[
+                DatasetCollection(
+                    name="collection_1",
+                    data_purposes=["essential"],
+                    fields=[DatasetField(name="field_1", data_purposes=["marketing"])],
+                )
+            ],
+        )
+        assert dataset.data_uses == ["marketing"]
+        assert dataset.collections[0].data_uses == ["essential"]
+        assert dataset.collections[0].fields[0].data_uses == ["marketing"]
+
+    def test_empty_data_uses_clears_the_deprecated_alias(self):
+        """[] means "cleared", not "unset": a client that reads a mirrored
+        object, deletes every data use, and sends the full object back (with
+        the stale alias still populated) must actually clear both fields."""
+        dataset = Dataset(
+            fides_key="dataset_1",
+            data_uses=[],
+            data_purposes=["marketing"],  # the stale echo of a prior read
+            collections=[],
+        )
+        assert dataset.data_uses == []
+        assert dataset.data_purposes == []
+
+    def test_divergent_fields_resolve_to_data_uses(self):
+        """When both fields arrive set and different, data_uses wins: a
+        round-tripped payload always carries a stale alias, so the
+        replacement field is the one the caller meant."""
+        dataset = Dataset(
+            fides_key="dataset_1",
+            data_uses=["essential"],
+            data_purposes=["marketing"],
+            collections=[],
+        )
+        assert dataset.data_uses == ["essential"]
+        assert dataset.data_purposes == ["essential"]
+
+    def test_mirrored_fields_survive_serialization(self):
+        """model_dump is what gets persisted; both names appear, mirrored."""
+        dumped = Dataset(
+            fides_key="dataset_1",
+            data_uses=["marketing"],
+            collections=[
+                DatasetCollection(
+                    name="collection_1",
+                    fields=[DatasetField(name="field_1", data_purposes=["essential"])],
+                )
+            ],
+        ).model_dump()
+        assert dumped["data_uses"] == ["marketing"]
+        assert dumped["data_purposes"] == ["marketing"]
+        field = dumped["collections"][0]["fields"][0]
+        assert field["data_uses"] == ["essential"]
+        assert field["data_purposes"] == ["essential"]
 
     def test_dataset_collection_skip_processing(self):
         collection = DatasetCollection(
