@@ -18,6 +18,11 @@ The types of changes are:
 
 ### Added
 - Added `fides_meta.redact` to datasets, collections, and fields [#35](https://github.com/ethyca/fideslang/pull/35)
+- Added `data_uses` to datasets, collections, and fields; a model validator keeps it mirrored with the deprecated `data_purposes` [#40](https://github.com/ethyca/fideslang/pull/40)
+- Added `data_subjects` to datasets, collections, and fields [#40](https://github.com/ethyca/fideslang/pull/40)
+
+### Deprecated
+- Deprecated `data_purposes` on datasets, collections, and fields in favor of `data_uses` (kept in sync during the transition) [#40](https://github.com/ethyca/fideslang/pull/40)
 
 ## [3.1.1](https://github.com/ethyca/fideslang/compare/3.1.0...3.1.1)
 
