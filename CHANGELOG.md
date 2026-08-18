@@ -14,15 +14,26 @@ The types of changes are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
-## [Unreleased](https://github.com/ethyca/fideslang/compare/3.1.0...main)
+## [Unreleased](https://github.com/ethyca/fideslang/compare/3.1.4...main)
+
+## [3.1.4](https://github.com/ethyca/fideslang/compare/3.1.3...3.1.4)
 
 ### Added
-- Added `fides_meta.redact` to datasets, collections, and fields [#35](https://github.com/ethyca/fideslang/pull/35)
 - Added `data_uses` to datasets, collections, and fields; a model validator keeps it mirrored with the deprecated `data_purposes` [#40](https://github.com/ethyca/fideslang/pull/40)
 - Added `data_subjects` to datasets, collections, and fields [#40](https://github.com/ethyca/fideslang/pull/40)
 
 ### Deprecated
 - Deprecated `data_purposes` on datasets, collections, and fields in favor of `data_uses` (kept in sync during the transition) [#40](https://github.com/ethyca/fideslang/pull/40)
+
+## [3.1.3](https://github.com/ethyca/fideslang/compare/3.1.2...3.1.3)
+
+### Added
+- Added `data_purposes` to Dataset, DatasetCollection, and DatasetField [#39](https://github.com/ethyca/fideslang/pull/39)
+
+## [3.1.2](https://github.com/ethyca/fideslang/compare/3.1.1...3.1.2)
+
+### Added
+- Added `fides_meta.redact` to datasets, collections, and fields [#35](https://github.com/ethyca/fideslang/pull/35)
 
 ## [3.1.1](https://github.com/ethyca/fideslang/compare/3.1.0...3.1.1)
 
